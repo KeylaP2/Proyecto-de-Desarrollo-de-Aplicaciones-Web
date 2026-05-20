@@ -1,0 +1,181 @@
+:root {
+    --primario: #050505;    
+    --acento: #ff3131;      
+    --blanco: #ffffff;
+    --fondo: #b8c5b0;
+    --texto: #0c0b0b;
+}
+
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'fantasy', sans-serif ;
+    background-color: var(--fondo);
+    color: var(--texto);
+    line-height: 1.6;
+}
+
+
+.main-header {
+    background-color: var(--primario);
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    text-align: center;
+    padding: 100px 20px;
+   
+}
+.main-slogan {
+    font-family: 'jetbrains mono', sans-serif ;
+    font-size: 0.8rem;
+    color: var(--blanco);
+    font-style: italic;
+    letter-spacing: 6px;
+    text-align: center;
+   
+}
+
+.main-header h1 {
+    font-size: 4rem; 
+    font-weight: 900;
+    color: var(--blanco);
+    text-transform: uppercase;
+    letter-spacing: -2px;
+}
+
+.main-header h1 span { color: var(--acento); }
+
+/* (Menú) */
+.main-nav ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--blanco);
+    padding: 12px 25px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    background: var(--acento);
+    color: var(--primario);
+    transform: translateY(-3px);
+}
+
+/* LAYOUT PRINCIPAL */
+.store-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    padding: 40px 5%;
+    max-width: 1400px;
+    margin: auto;
+}
+
+/* MARCAS DE OTRA MANERA (Tags funcionales) */
+.filters-sidebar {
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: 24px;
+    height: fit-content;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.brand-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.brand-tag {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 2px solid transparent;
+}
+
+.brand-tag:hover {
+    border-color: var(--acento);
+    background: #fff;
+}
+
+.brand-tag input {
+    accent-color: var(--acento);
+    width: 18px; height: 18px;
+}
+
+/* CUADRÍCULA Y TARJETAS */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.product-card {
+    background: var(--blanco);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: 0.4s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.08);
+}
+
+.product-img-wrapper {
+    height: 250px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Evita que la imagen se deforme */
+    transition: 0.5s;
+}
+
+.product-card:hover .product-img { transform: scale(1.1); }
+
+.product-info { padding: 20px; text-align: center; }
+
+.price {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 10px 0;
+}
+
+.add-btn {
+    width: 100%;
+    background: var(--primario);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.add-btn:hover { background: var(--acento); color: var(--primario); }
+
+.main-footer { text-align: center; padding: 40px; background: var(--primario); color: white; margin-top: 40px; }
