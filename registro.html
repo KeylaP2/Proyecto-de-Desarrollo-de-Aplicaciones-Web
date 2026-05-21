@@ -1,0 +1,37 @@
+<main class="registration-main">
+    <article class="form-card">
+        <header class="form-header">
+            <h2>Regístrate</h2>
+            <p> Es rápido y sencillo.</p>
+        </header>
+
+        <form action="#" method="POST" class="registration-form">
+            <fieldset class="row-group">
+                <input type="text" name="firstname" placeholder="Nombre" required>
+                <input type="text" name="lastname" placeholder="Apellido" required>
+            </fieldset>
+
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+
+            <label class="field-label">Fecha de nacimiento</label>
+            <section class="row-group triple">
+                <select name="day"><option>01</option></select>
+                <select name="month"><option>01</option></select>
+                <select name="year"><option>2026</option></select>
+            </section>
+
+            <label class="field-label">Género</label>
+            <section class="gender-container">
+                <label class="gender-option">Mujer <input type="radio" name="gender" value="f"></label>
+                <label class="gender-option">Hombre <input type="radio" name="gender" value="m"></label>
+                <label class="gender-option">Otro <input type="radio" name="gender" value="o"></label>
+            </section>
+
+            <footer class="form-footer">
+                <p class="disclaimer">Al hacer clic en "Registrarte", aceptas nuestras Condiciones.</p>
+                <button type="submit" class="btn-signup">Registrarte</button>
+            </footer>
+        </form>
+    </article>
+</main>
