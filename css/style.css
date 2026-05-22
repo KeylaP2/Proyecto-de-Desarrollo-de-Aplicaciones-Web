@@ -179,3 +179,115 @@ body {
 .add-btn:hover { background: var(--acento); color: var(--primario); }
 
 .main-footer { text-align: center; padding: 40px; background: var(--primario); color: white; margin-top: 40px; }
+
+/* ESTILO DEL FORMULARIO DE REGISTRO */
+
+:root {
+    --fondo-card: #ffffff;
+    --input-bg: #faf0ed;
+    --borde: #b8b0b0;
+}
+
+.registration-main {
+    display: flex;
+    justify-content: center;
+    padding: 50px 0;
+    background-color: var(--fondo); 
+}
+
+.form-card {
+    background: var(--fondo-card);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(252, 252, 252, 0.5);
+    width: 100%;
+    max-width: 430px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.form-header {
+    border-bottom: 1px solid var(--borde);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.form-header h2 {
+    color: var(--negro);
+    font-size: 1.8rem;
+}
+
+.form-header p {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Manejo de filas  */
+.row-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    border: none;
+    padding: 0;
+}
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+select {
+    width: 100%;
+    padding: 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    color: var(--negro);
+    font-family: 'Poppins', sans-serif;
+}
+
+input:focus {
+    border-color: var(--acento); 
+    outline: none;
+}
+
+.field-label {
+    display: block;
+    text-align: left;
+    font-size: 0.8rem;
+    color: #666;
+    margin: 15px 0 5px;
+}
+
+.gender-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.gender-option {
+    flex: 1;
+    border: 1px solid var(--borde);
+    padding: 10px;
+    border-radius: 6px;
+    color: var(--negro);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.btn-signup {
+    background: var(--acento); 
+    color: white;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-signup:hover {
+    box-shadow: 0 0 20px var(--acento);
+    transform: translateY(-2px);
+}
