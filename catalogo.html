@@ -4,91 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
-    <title>SoloTenisRD - Catálogo de Exclusividades</title>
+    <title>SoloTenisRD - Catálogo</title>
 </head>
 <body>
+    <main class="registration-main">
+        <article class="form-card">
+            <header class="form-header">
+                <h2>Catálogo Exclusivo</h2>
+                <p>Añade tus tenis favoritos al carrito.</p>
+                <p>Artículos en el Carrito: <strong id="contador-carrito">0</strong></p>
+            </header>
 
-    <nav class="main-nav">
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="catalogo.html" class="active">Catálogo</a></li>
-            <li><a href="registro.html">Registro</a></li>
-            <li><a href="#" id="ver-carrito">Carrito (<span id="contador-carrito">0</span>)</a></li>
-        </ul>
-    </nav>
-
-    <header class="main-header">
-        <h1 class="main-title">SOLOTENISRD</h1>
-        <p class="sub-title">La mejor tienda de tenis en RD</p>
-    </header>
-
-    <main class="container-catalogo">
-        
-        <aside class="filtros-sidebar">
-            <h3>Filtros</h3>
-            <section class="grupo-filtro">
-                <h4>Marcas</h4>
-                <ul>
-                    <li><label><input type="checkbox" class="filtro-marca" value="nike"> Nike</label></li>
-                    <li><label><input type="checkbox" class="filtro-marca" value="jordan"> Jordan</label></li>
-                    <li><label><input type="checkbox" class="filtro-marca" value="adidas"> Adidas</label></li>
-                </ul>
-            </section>
-        </aside>
-
-        <section class="productos-seccion">
-            <h2>Tenis Disponibles</h2>
-            
-            <ul class="productos-grid" id="lista-productos">
+            <ul class="registration-form" style="list-style: none; padding: 0;">
                 
-                <li class="producto-item">
-                    <article class="producto-card" data-marca="nike">
-                        <figure class="producto-container-img">
-                            <img src="assets/nike-retro.jpg" alt="Nike Air Force 1" class="producto-img">
-                        </figure>
-                        <header class="producto-info">
-                            <h3>Nike Air Force 1</h3>
-                            <p class="precio">RD$ 5,500</p>
-                        </header>
-                        <button class="btn-agregar" data-id="1" data-nombre="Nike Air Force 1" data-precio="5500">
-                            Añadir al Carrito
-                        </button>
-                    </article>
+                <li class="form-group" style="margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 15px;">
+                    <h3 style="margin: 0 0 10px 0;">Nike Air Force 1</h3>
+                    <p class="field-label" style="font-weight: bold;">Precio: RD$ 5,500</p>
+                    <button type="button" class="btn-signup btn-agregar-carrito" data-id="1" data-nombre="Nike Air Force 1" data-precio="5500">
+                        Añadir al Carrito
+                    </button>
                 </li>
 
-                <li class="producto-item">
-                    <article class="producto-card" data-marca="jordan">
-                        <figure class="producto-container-img">
-                            <img src="assets/jordan-retro.jpg" alt="Jordan 4 Retro" class="producto-img">
-                        </figure>
-                        <header class="producto-info">
-                            <h3>Jordan 4 Retro</h3>
-                            <p class="precio">RD$ 8,500</p>
-                        </header>
-                        <button class="btn-agregar" data-id="2" data-nombre="Jordan 4 Retro" data-precio="8500">
-                            Añadir al Carrito
-                        </button>
-                    </article>
+                <li class="form-group" style="margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 15px;">
+                    <h3 style="margin: 0 0 10px 0;">Jordan 4 Retro</h3>
+                    <p class="field-label" style="font-weight: bold;">Precio: RD$ 8,500</p>
+                    <button type="button" class="btn-signup btn-agregar-carrito" data-id="2" data-nombre="Jordan 4 Retro" data-precio="8500">
+                        Añadir al Carrito
+                    </button>
                 </li>
 
-                <li class="producto-item">
-                    <article class="producto-card" data-marca="adidas">
-                        <figure class="producto-container-img">
-                            <img src="assets/adidas-forum.jpg" alt="Adidas Forum Low" class="producto-img">
-                        </figure>
-                        <header class="producto-info">
-                            <h3>Adidas Forum Low</h3>
-                            <p class="precio">RD$ 4,800</p>
-                        </header>
-                        <button class="btn-agregar" data-id="3" data-nombre="Adidas Forum Low" data-precio="4800">
-                            Añadir al Carrito
-                        </button>
-                    </article>
+                <li class="form-group" style="margin-bottom: 25px; padding-bottom: 15px;">
+                    <h3 style="margin: 0 0 10px 0;">Adidas Forum Low</h3>
+                    <p class="field-label" style="font-weight: bold;">Precio: RD$ 4,800</p>
+                    <button type="button" class="btn-signup btn-agregar-carrito" data-id="3" data-nombre="Adidas Forum Low" data-precio="4800">
+                        Añadir al Carrito
+                    </button>
                 </li>
 
             </ul>
-        </section>
-
+        </article>
     </main>
 
     <script src="catalogo.js"></script>
