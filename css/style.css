@@ -207,6 +207,8 @@ body {
     overflow: hidden;
     transition: 0.4s;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
 }
 
 .product-card:hover {
@@ -214,10 +216,11 @@ body {
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
 }
 
-.product-img-wrapper {
+.product-card figure {
     height: 250px;
     overflow: hidden;
     background: #f8fafc;
+    margin: 0;
 }
 
 .product-img {
@@ -234,6 +237,9 @@ body {
 .product-info {
     padding: 20px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .price {
@@ -241,6 +247,10 @@ body {
     font-size: 1.5rem;
     font-weight: 800;
     margin: 10px 0;
+}
+
+.price-action {
+    margin-top: auto;
 }
 
 .add-btn {
