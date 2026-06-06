@@ -164,14 +164,8 @@ formulario.addEventListener('submit', function (event) {
             nombre: inputNombre.value.trim(),
             apellido: inputApellido.value.trim(),
             correo: inputEmail.value.trim(),
-<<<<<<< HEAD
             password: inputPassword.value.trim(),
             telefono: inputPhone.value.trim()
-=======
-            telefono: inputPhone.value.trim(),
-            fechaNacimiento: `${selectDay.value}/${selectMonth.value}/${selectYear.value}`,
-            genero: generoSeleccionado
->>>>>>> fcc8266eaf51e611c1d273c5489b68e6ffa2a36b
         };
 
         // Guardamos el objeto en LocalStorage convirtiéndolo a texto plano
