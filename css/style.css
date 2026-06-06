@@ -1,15 +1,19 @@
 :root {
-    --primario: #050505;    
-    --acento: #ff3131;      
+    --primario: #050505;
+    --acento: #ff3131;
     --blanco: #ffffff;
     --fondo: #b8c5b0;
     --texto: #0c0b0b;
 }
 
- * { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-    font-family: 'fantasy', sans-serif ;
+    font-family: 'fantasy', sans-serif;
     background-color: var(--fondo);
     color: var(--texto);
     line-height: 1.6;
@@ -26,27 +30,30 @@ body {
     gap: 30px;
     text-align: center;
     padding: 100px 20px;
-   
+
 }
+
 .main-slogan {
-    font-family: 'Poppins', sans-serif ;
+    font-family: 'Poppins', sans-serif;
     font-size: 1.2rem;
     color: var(--blanco);
     font-style: Poppins;
     letter-spacing: 3px;
     text-align: center;
-   
+
 }
 
 .main-header h1 {
-    font-size: 4rem; 
+    font-size: 4rem;
     font-weight: 900;
     color: var(--blanco);
     text-transform: uppercase;
     letter-spacing: -2px;
 }
 
-.main-header h1 span { color: var(--acento); }
+.main-header h1 span {
+    color: var(--acento);
+}
 
 /* (Menú) */
 .main-nav ul {
@@ -69,7 +76,8 @@ body {
     transition: all 0.3s ease;
 }
 
-.main-nav a:hover, .main-nav a.active {
+.main-nav a:hover,
+.main-nav a.active {
     background: var(--acento);
     color: var(--primario);
     transform: translateY(-3px);
@@ -77,8 +85,8 @@ body {
 
 /* LAYOUT PRINCIPAL */
 .store-layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 30px;
     padding: 40px 5%;
     width: 100%;
@@ -92,7 +100,68 @@ body {
     padding: 30px;
     border-radius: 24px;
     height: fit-content;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.filters-sidebar {
+    background: var(--blanco);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filters-sidebar h2 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--texto);
+}
+
+.filter-group h3 {
+    font-size: 0.9rem;
+    color: var(--texto);
+    margin-bottom: 12px;
+}
+
+.filter-group ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+
+.filter-group li {
+    margin: 0;
+}
+
+.filter-group label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.filter-group label:hover {
+    background: #e0e0e0;
+}
+
+.filter-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--acento);
+}
+
+.filter-group input[type="checkbox"]:checked+label,
+.filter-group label:has(input[type="checkbox"]:checked) {
+    background: var(--acento);
+    color: white;
+    border-color: var(--acento);
 }
 
 .brand-tags {
@@ -121,7 +190,8 @@ body {
 
 .brand-tag input {
     accent-color: var(--acento);
-    width: 18px; height: 18px;
+    width: 18px;
+    height: 18px;
 }
 
 /* CUADRÍCULA Y TARJETAS */
@@ -136,12 +206,12 @@ body {
     border-radius: 24px;
     overflow: hidden;
     transition: 0.4s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 }
 
 .product-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
 }
 
 .product-img-wrapper {
@@ -153,13 +223,18 @@ body {
 .product-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
     transition: 0.5s;
 }
 
-.product-card:hover .product-img { transform: scale(1.1); }
+.product-card:hover .product-img {
+    transform: scale(1.1);
+}
 
-.product-info { padding: 20px; text-align: center; }
+.product-info {
+    padding: 20px;
+    text-align: center;
+}
 
 .price {
     display: block;
@@ -181,9 +256,18 @@ body {
 }
 
 
-.add-btn:hover { background: var(--acento); color: var(--primario); }
+.add-btn:hover {
+    background: var(--acento);
+    color: var(--primario);
+}
 
-.main-footer { text-align: center; padding: 40px; background: var(--primario); color: white; margin-top: 40px; }
+.main-footer {
+    text-align: center;
+    padding: 40px;
+    background: var(--primario);
+    color: white;
+    margin-top: 40px;
+}
 
 /* ESTILO DEL FORMULARIO DE REGISTRO */
 
@@ -197,7 +281,7 @@ body {
     display: flex;
     justify-content: center;
     padding: 50px 0;
-    background-color: var(--fondo); 
+    background-color: var(--fondo);
 }
 
 .form-card {
@@ -235,10 +319,10 @@ body {
     padding: 0;
 }
 
-input[type="text"], 
-input[type="email"], 
-input[type="password"], 
-input[type="tel"], 
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
 select {
     width: 100%;
     padding: 12px;
@@ -250,7 +334,7 @@ select {
 }
 
 input:focus {
-    border-color: var(--acento); 
+    border-color: var(--acento);
     outline: none;
 }
 
@@ -281,7 +365,7 @@ input:focus {
 }
 
 .btn-signup {
-    background: var(--acento); 
+    background: var(--acento);
     color: white;
     width: 100%;
     padding: 15px;
@@ -298,20 +382,93 @@ input:focus {
     transform: translateY(-2px);
 }
 
+
 /* MEDIA QUERIES PARA QUE SEA RESPONSIVE */
 @media (max-width: 768px) {
     .store-layout {
-        grid-template-columns: 1fr; /* Los filtros pasan arriba y los tenis abajo */
         padding: 20px 2%;
+        grid-template-columns: 1fr;
+    }
+
+    .filters-sidebar {
+        padding: 15px;
+    }
+
+    .filter-group ul {
+        gap: 6px;
+    }
+
+    .filter-group label {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
 
     .main-nav ul {
-        flex-direction: column; /* El menú se pone en lista si no cabe horizontal */
+        flex-direction: column;
         align-items: center;
         gap: 10px;
     }
 
     .main-header {
-        padding: 40px 15px; /* Menos espacio arriba en celulares */
+        padding: 40px 15px;
     }
+}
+
+.back-btn {
+    background: transparent;
+    border: none;
+    color: var(--acento);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 15px;
+    display: block;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    color: var(--primario);
+    transform: translateX(-5px);
+}
+
+/* CLASES DE VALIDACIÓN JS */
+input.error, select.error {
+    border-color: #ff3131;
+    background-color: #fff0f0;
+}
+
+input.success, select.success {
+    border-color: #28a745;
+    background-color: #f0fff4;
+}
+
+.error-msg {
+    color: #ff3131;
+    font-size: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 2px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.success-msg-global {
+    color: #28a745;
+    background: #f0fff4;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #28a745;
+}
+
+/* ESTILOS LISTA DE USUARIOS (LocalStorage) */
+#lista-usuarios li {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+#lista-usuarios li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
