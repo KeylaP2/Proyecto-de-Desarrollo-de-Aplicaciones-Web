@@ -82,6 +82,7 @@ formulario.addEventListener('submit', function(event) {
             nombre: inputNombre.value.trim(),
             apellido: inputApellido.value.trim(),
             correo: inputEmail.value.trim(),
+            password: inputPassword.value.trim(),
             telefono: inputPhone.value.trim()
         };
 
