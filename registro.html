@@ -1,46 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <main class="registration-main">
-    <article class="form-card">
-        <header class="form-header">
-            <h2>Regístrate</h2>
-            <p> Es rápido y sencillo.</p>
-        </header>
+        <article class="form-card">
+            <header class="form-header">
+                <button type="button" class="back-btn" onclick="history.back()">← Volver</button>
+                <h2>Regístrate</h2>
+                <p> Es rápido y sencillo.</p>
+            </header>
 
-        <form action="#" method="POST" class="registration-form">
-            <fieldset class="row-group">
-                <input type="text" name="firstname" placeholder="Nombre" required>
-                <input type="text" name="lastname" placeholder="Apellido" required>
-            </fieldset>
+            <form action="#" method="POST" class="registration-form" id="registro-form">
+                <fieldset class="row-group">
+                    <div style="flex: 1; display: flex; flex-direction: column;">
+                        <input type="text" id="firstname" name="firstname" placeholder="Nombre">
+                        <span class="error-msg" id="error-firstname"></span>
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column;">
+                        <input type="text" id="lastname" name="lastname" placeholder="Apellido">
+                        <span class="error-msg" id="error-lastname"></span>
+                    </div>
+                </fieldset>
 
-            <input type="email" name="email" placeholder="Correo electrónico" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <input type="tel" name="phone" placeholder="Teléfono" required>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" placeholder="Correo electrónico">
+                    <span class="error-msg" id="error-email"></span>
+                </div>
 
-            <label class="field-label">Fecha de nacimiento</label>
-            <section class="row-group triple">
-                <select name="day"><option>01</option></select>
-                <select name="month"><option>01</option></select>
-                <select name="year"><option>2026</option></select>
-            </section>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Contraseña">
+                    <span class="error-msg" id="error-password"></span>
+                </div>
 
-            <label class="field-label">Género</label>
-            <section class="gender-container">
-                <label class="gender-option">Mujer <input type="radio" name="gender" value="f"></label>
-                <label class="gender-option">Hombre <input type="radio" name="gender" value="m"></label>
-                <label class="gender-option">Otro <input type="radio" name="gender" value="o"></label>
-            </section>
+                <div class="input-wrapper">
+                    <input type="password" id="confirm-password" name="confirm-password"
+                        placeholder="Confirmar Contraseña">
+                    <span class="error-msg" id="error-confirm-password"></span>
+                </div>
 
-            <footer class="form-footer">
-                <p class="disclaimer">Al hacer clic en "Sign Up", aceptas nuestras Condiciones.</p>
-                <button type="submit" class="btn-signup">Sign Up</button>
-            </footer>
-        </form>
-    </article>
-</main>
+                <div class="input-wrapper">
+                    <input type="tel" id="phone" name="phone" placeholder="Teléfono">
+                    <span class="error-msg" id="error-phone"></span>
+                </div>
+
+                <label class="field-label">Fecha de nacimiento</label>
+                <section class="row-group triple">
+                    <select name="day" id="day">
+                        <option value="">Día</option>
+                        <option value="01">01</option>
+                    </select>
+                    <select name="month" id="month">
+                        <option value="">Mes</option>
+                        <option value="01">01</option>
+                    </select>
+                    <select name="year" id="year">
+                        <option value="">Año</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </section>
+                <span class="error-msg" id="error-fecha"></span>
+
+                <label class="field-label">Género</label>
+                <section class="gender-container" id="gender-container">
+                    <label class="gender-option">Mujer <input type="radio" name="gender" value="Mujer"></label>
+                    <label class="gender-option">Hombre <input type="radio" name="gender" value="Hombre"></label>
+                    <label class="gender-option">Otro <input type="radio" name="gender" value="Otro"></label>
+                </section>
+                <span class="error-msg" id="error-gender"></span>
+
+                <div id="form-mensaje" style="margin-bottom: 15px; text-align: center; font-weight: bold;"></div>
+
+                <footer class="form-footer">
+                    <p class="disclaimer">Al hacer clic en "Sign Up", aceptas nuestras Condiciones.</p>
+                    <button type="submit" class="btn-signup">Sign Up</button>
+                </footer>
+            </form>
+        </article>
+
+        <section class="usuarios-registrados" id="usuarios-registrados-section"
+            style="display: none; padding: 25px; margin-top: 30px; background: white; border-radius: 12px; max-width: 430px; width: 100%; border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+            <h2 style="text-align: center; font-size: 1.5rem; margin-bottom: 15px;">Usuarios Registrados</h2>
+            <ul id="lista-usuarios" style="list-style: none; padding: 0;"></ul>
+        </section>
+    </main>
+    <script src="registro.js"></script>
+</body>
+
+</html>
