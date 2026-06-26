@@ -40,6 +40,12 @@ npm run init-db
 npm start
 ```
 
+El frontend se mantiene en su rama correspondiente y consume esta API desde:
+
+```text
+http://localhost:3000/api/usuarios
+```
+
 Para desarrollo con reinicio automatico:
 
 ```bash
@@ -48,7 +54,13 @@ npm run dev
 
 ## Configuracion
 
-El proyecto usa variables de entorno desde `.env`.
+El proyecto usa variables de entorno desde `.env`. Para preparar el entorno local, copia el archivo de ejemplo:
+
+```bash
+cp .env.example .env
+```
+
+Valores usados por defecto:
 
 ```env
 PORT=3000
@@ -93,11 +105,17 @@ Para crear o actualizar un usuario:
 
 ```json
 {
-  "nombre": "Ana Perez",
-  "email": "ana@example.com",
-  "password": "password_demo_1"
+  "nombre": "Esteban Revi",
+  "apellido": "Revi",
+  "email": "esteban.revi@example.com",
+  "telefono": "8095551234",
+  "fechaNacimiento": "15/06/1998",
+  "genero": "Hombre",
+  "password": "ClaveSegura2026"
 }
 ```
+
+El formulario de registro del frontend debe enviar estos datos al endpoint `POST /api/usuarios` y cargar la lista de usuarios registrados desde `GET /api/usuarios`.
 
 ## Scripts disponibles
 
@@ -110,4 +128,6 @@ npm run init-db
 ## Notas de entrega
 
 - `package-lock.json` debe agregarse al repositorio junto con `package.json`.
+- `.env.example` se agrega al repositorio como referencia de configuracion.
+- `.env` no se versiona porque contiene la configuracion real del entorno local.
 - La base de datos SQLite generada en `database/mibase.db` no se versiona porque esta incluida en `.gitignore`.

@@ -1,5 +1,19 @@
 const Usuario = require("../models/usuario.model");
 
+const camposObligatorios = [
+  "nombre",
+  "apellido",
+  "email",
+  "telefono",
+  "fechaNacimiento",
+  "genero",
+  "password"
+];
+
+const faltanCamposObligatorios = (body) => {
+  return camposObligatorios.some((campo) => !body[campo]);
+};
+
 const getUsuarios = async (req, res, next) => {
   try {
     const usuarios = await Usuario.findAll();
@@ -25,15 +39,23 @@ const getUsuarioById = async (req, res, next) => {
 
 const createUsuario = async (req, res, next) => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, apellido, email, telefono, fechaNacimiento, genero, password } = req.body;
 
-    if (!nombre || !email || !password) {
+    if (faltanCamposObligatorios(req.body)) {
       return res.status(400).json({
-        message: "Los campos nombre, email y password son obligatorios"
+        message: "Los campos nombre, apellido, email, telefono, fechaNacimiento, genero y password son obligatorios"
       });
     }
 
-    const usuario = await Usuario.create({ nombre, email, password });
+    const usuario = await Usuario.create({
+      nombre,
+      apellido,
+      email,
+      telefono,
+      fechaNacimiento,
+      genero,
+      password
+    });
     return res.status(201).json({ data: usuario });
   } catch (error) {
     return next(error);
@@ -42,17 +64,21 @@ const createUsuario = async (req, res, next) => {
 
 const updateUsuario = async (req, res, next) => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, apellido, email, telefono, fechaNacimiento, genero, password } = req.body;
 
-    if (!nombre || !email || !password) {
+    if (faltanCamposObligatorios(req.body)) {
       return res.status(400).json({
-        message: "Los campos nombre, email y password son obligatorios"
+        message: "Los campos nombre, apellido, email, telefono, fechaNacimiento, genero y password son obligatorios"
       });
     }
 
     const result = await Usuario.update(req.params.id, {
       nombre,
+      apellido,
       email,
+      telefono,
+      fechaNacimiento,
+      genero,
       password
     });
 

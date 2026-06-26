@@ -2,7 +2,7 @@ const db = require("../database/connection");
 
 const findAll = () => {
   const sql = `
-    SELECT id, nombre, email, created_at, updated_at
+    SELECT id, nombre, apellido, email, telefono, fecha_nacimiento, genero, created_at, updated_at
     FROM usuarios
     ORDER BY id DESC
   `;
@@ -17,7 +17,7 @@ const findAll = () => {
 
 const findById = (id) => {
   const sql = `
-    SELECT id, nombre, email, created_at, updated_at
+    SELECT id, nombre, apellido, email, telefono, fecha_nacimiento, genero, created_at, updated_at
     FROM usuarios
     WHERE id = ?
   `;
@@ -30,29 +30,39 @@ const findById = (id) => {
   });
 };
 
-const create = ({ nombre, email, password }) => {
+const create = ({ nombre, apellido, email, telefono, fechaNacimiento, genero, password }) => {
   const sql = `
-    INSERT INTO usuarios (nombre, email, password)
-    VALUES (?, ?, ?)
+    INSERT INTO usuarios (nombre, apellido, email, telefono, fecha_nacimiento, genero, password)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   return new Promise((resolve, reject) => {
-    db.run(sql, [nombre, email, password], function handleInsert(error) {
+    db.run(sql, [nombre, apellido, email, telefono, fechaNacimiento, genero, password], function handleInsert(error) {
       if (error) reject(error);
-      else resolve({ id: this.lastID, nombre, email });
+      else {
+        resolve({
+          id: this.lastID,
+          nombre,
+          apellido,
+          email,
+          telefono,
+          fecha_nacimiento: fechaNacimiento,
+          genero
+        });
+      }
     });
   });
 };
 
-const update = (id, { nombre, email, password }) => {
+const update = (id, { nombre, apellido, email, telefono, fechaNacimiento, genero, password }) => {
   const sql = `
     UPDATE usuarios
-    SET nombre = ?, email = ?, password = ?, updated_at = CURRENT_TIMESTAMP
+    SET nombre = ?, apellido = ?, email = ?, telefono = ?, fecha_nacimiento = ?, genero = ?, password = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `;
 
   return new Promise((resolve, reject) => {
-    db.run(sql, [nombre, email, password, id], function handleUpdate(error) {
+    db.run(sql, [nombre, apellido, email, telefono, fechaNacimiento, genero, password, id], function handleUpdate(error) {
       if (error) reject(error);
       else resolve({ changes: this.changes });
     });
