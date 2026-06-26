@@ -2,7 +2,7 @@ const db = require("../database/connection");
 
 const findAll = () => {
   const sql = `
-    SELECT id, nombre, apellido, email, telefono, fecha_nacimiento, genero, created_at, updated_at
+    SELECT id, nombre, apellido, email, email AS correo, telefono, fecha_nacimiento, genero, created_at, updated_at
     FROM usuarios
     ORDER BY id DESC
   `;
@@ -17,7 +17,7 @@ const findAll = () => {
 
 const findById = (id) => {
   const sql = `
-    SELECT id, nombre, apellido, email, telefono, fecha_nacimiento, genero, created_at, updated_at
+    SELECT id, nombre, apellido, email, email AS correo, telefono, fecha_nacimiento, genero, created_at, updated_at
     FROM usuarios
     WHERE id = ?
   `;
@@ -45,6 +45,7 @@ const create = ({ nombre, apellido, email, telefono, fechaNacimiento, genero, pa
           nombre,
           apellido,
           email,
+          correo: email,
           telefono,
           fecha_nacimiento: fechaNacimiento,
           genero

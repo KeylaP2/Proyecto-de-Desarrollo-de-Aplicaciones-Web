@@ -3,7 +3,6 @@ const Usuario = require("../models/usuario.model");
 const camposObligatorios = [
   "nombre",
   "apellido",
-  "email",
   "telefono",
   "fechaNacimiento",
   "genero",
@@ -11,7 +10,7 @@ const camposObligatorios = [
 ];
 
 const faltanCamposObligatorios = (body) => {
-  return camposObligatorios.some((campo) => !body[campo]);
+  return camposObligatorios.some((campo) => !body[campo]) || !(body.email || body.correo);
 };
 
 const getUsuarios = async (req, res, next) => {
@@ -39,11 +38,12 @@ const getUsuarioById = async (req, res, next) => {
 
 const createUsuario = async (req, res, next) => {
   try {
-    const { nombre, apellido, email, telefono, fechaNacimiento, genero, password } = req.body;
+    const { nombre, apellido, correo, telefono, fechaNacimiento, genero, password } = req.body;
+    const email = req.body.email || correo;
 
     if (faltanCamposObligatorios(req.body)) {
       return res.status(400).json({
-        message: "Los campos nombre, apellido, email, telefono, fechaNacimiento, genero y password son obligatorios"
+        message: "Los campos nombre, apellido, email/correo, telefono, fechaNacimiento, genero y password son obligatorios"
       });
     }
 
@@ -64,11 +64,12 @@ const createUsuario = async (req, res, next) => {
 
 const updateUsuario = async (req, res, next) => {
   try {
-    const { nombre, apellido, email, telefono, fechaNacimiento, genero, password } = req.body;
+    const { nombre, apellido, correo, telefono, fechaNacimiento, genero, password } = req.body;
+    const email = req.body.email || correo;
 
     if (faltanCamposObligatorios(req.body)) {
       return res.status(400).json({
-        message: "Los campos nombre, apellido, email, telefono, fechaNacimiento, genero y password son obligatorios"
+        message: "Los campos nombre, apellido, email/correo, telefono, fechaNacimiento, genero y password son obligatorios"
       });
     }
 
