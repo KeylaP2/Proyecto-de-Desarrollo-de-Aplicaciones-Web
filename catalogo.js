@@ -3,22 +3,36 @@ const contadorCarrito = document.getElementById('contador-carrito');
 const botonesAgregar = document.querySelectorAll('.btn-agregar-carrito');
 
 // Inicializar carrito desde LocalStorage o como arreglo vacío
-let carrito = JSON.parse(localStorage.getItem('carritoSoloTenis')) || [];
+let carrito = [];
+
+try {
+    const carritoGuardado = JSON.parse(localStorage.getItem('carritoSoloTenis')) || [];
+    carrito = Array.isArray(carritoGuardado) ? carritoGuardado : [];
+} catch (error) {
+    carrito = [];
+}
 
 // Actualizar el número total de artículos en la interfaz
 function actualizarNumeroContador() {
     const totalArticulos = carrito.reduce((acumulador, producto) => acumulador + producto.cantidad, 0);
-    contadorCarrito.innerHTML = totalArticulos;
+
+    if (contadorCarrito) {
+        contadorCarrito.textContent = totalArticulos;
+    }
 }
 
 // Lógica para añadir un producto al arreglo del carrito
 function procesarAñadirCarrito(evento) {
-    const botonSeleccionado = evento.target;
-    
+    const botonSeleccionado = evento.currentTarget;
+
     // Obtener datos del producto desde los atributos del HTML
     const id = botonSeleccionado.getAttribute('data-id');
     const nombre = botonSeleccionado.getAttribute('data-nombre');
     const precio = parseFloat(botonSeleccionado.getAttribute('data-precio'));
+
+    if (!id || !nombre || Number.isNaN(precio)) {
+        return;
+    }
 
     // Verificar si el producto ya existe en el carrito
     const productoExistente = carrito.find(item => item.id === id);
@@ -36,11 +50,12 @@ function procesarAñadirCarrito(evento) {
 
     actualizarNumeroContador();
 
-    // Feedback visual temporal en el botón
-    const textoOriginal = botonSeleccionado.innerHTML;
-    botonSeleccionado.innerHTML = '¡Añadido! ✓';
+    // Feedback visual temporal en el boton
+    const textoOriginal = botonSeleccionado.textContent;
+    botonSeleccionado.textContent = '¡Añadido! ✓';
+
     setTimeout(() => {
-        botonSeleccionado.innerHTML = textoOriginal;
+        botonSeleccionado.textContent = textoOriginal;
     }, 1000);
 }
 
