@@ -18,7 +18,7 @@
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="catalogo.html" class="active">Catálogo</a></li>
                 <li><a href="registro.html">Registro</a></li>
-                <li><a href="#" class="cart-btn">Carrito (0)</a></li>
+                <li><a href="#" class="cart-btn">Carrito (<span id="contador-carrito">0</span>)</a></li>
             </ul>
         </nav>
     </header>
@@ -30,14 +30,14 @@
             <section class="filter-group">
                 <h3>Marcas</h3>
                 <ul>
-                    <li><label><input type="checkbox"> Nike</label></li>
-                    <li><label><input type="checkbox"> Jordan</label></li>
-                    <li><label><input type="checkbox"> Adidas</label></li>
-                    <li><label><input type="checkbox"> Reebok</label></li>
-                    <li><label><input type="checkbox"> New Balance</label></li>
-                    <li><label><input type="checkbox"> Alexander McQueen</label></li>
-                    <li><label><input type="checkbox"> Converse</label></li>
-                    <li><label><input type="checkbox"> Asics</label></li>
+                    <li><label><input type="checkbox" value="nike"> Nike</label></li>
+                    <li><label><input type="checkbox" value="jordan"> Jordan</label></li>
+                    <li><label><input type="checkbox" value="adidas"> Adidas</label></li>
+                    <li><label><input type="checkbox" value="reebok"> Reebok</label></li>
+                    <li><label><input type="checkbox" value="new balance"> New Balance</label></li>
+                    <li><label><input type="checkbox" value="alexander mcqueen"> Alexander McQueen</label></li>
+                    <li><label><input type="checkbox" value="converse"> Converse</label></li>
+                    <li><label><input type="checkbox" value="asics"> Asics</label></li>
                 </ul>
             </section>
         </aside>
@@ -128,7 +128,7 @@
                 </article>
 
                 <!-- Sketchers -->
-                <article class="product-card" data-brand="sketchers">
+                <article class="product-card" data-brand="reebok">
                     <figure>
                         <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60"
                             alt="Reebok Classic Leather" class="product-img">
@@ -147,10 +147,10 @@
                 <article class="product-card" data-brand="converse">
                     <figure>
                         <img src="https://images-na.ssl-images-amazon.com/images/I/81I7yQPNyjL._AC_UL375_SR375,375_.jpg"
-                            alt="Converse " class="product-img">
+                            alt="Converse" class="product-img">
                     </figure>
                     <section class="product-info">
-                        <h3>Sketchers</h3>
+                        <h3>Converse</h3>
                         <p class="category">Clásico</p>
                         <p class="price-action">
                             <span class="price">$5,500</span>
@@ -249,7 +249,7 @@
         <p>Proyecto: Desarrollo de Aplicaciones Web - UAPA</p>
     </footer>
 
-    <script src="js/script.js"></script>
+    <script src="catalogo.js"></script>
 </body>
 
 </html>

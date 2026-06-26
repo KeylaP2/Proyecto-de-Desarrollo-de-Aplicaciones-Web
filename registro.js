@@ -10,13 +10,16 @@ const selectDay = document.getElementById('day');
 const selectMonth = document.getElementById('month');
 const selectYear = document.getElementById('year');
 const radiosGender = document.getElementsByName('gender');
-const CLAVE_USUARIOS = 'usuariosRegistrados';
+const API_URL = 'http://localhost:3000/api/usuarios';
 
-function obtenerUsuariosRegistrados() {
+async function obtenerUsuariosRegistrados() {
     try {
-        const usuarios = JSON.parse(localStorage.getItem(CLAVE_USUARIOS)) || [];
-        return Array.isArray(usuarios) ? usuarios : [];
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('No se pudo cargar la lista de usuarios.');
+        const resultado = await response.json();
+        return Array.isArray(resultado.data) ? resultado.data : [];
     } catch (error) {
+        console.error('Error al obtener usuarios:', error);
         return [];
     }
 }
@@ -220,7 +223,7 @@ for (const radio of radiosGender) {
 }
 
 // 4. Manejo del envío del formulario y persistencia de datos
-formulario.addEventListener('submit', function (event) {
+formulario.addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const esNombreValido = validarCampoVacio(inputNombre, document.getElementById('error-firstname'), 'El nombre es obligatorio.');
@@ -233,6 +236,8 @@ formulario.addEventListener('submit', function (event) {
     const esGeneroValido = validarGenero(document.getElementById('error-gender'));
     const contenedorExito = document.getElementById('form-mensaje');
 
+    contenedorExito.textContent = '';
+
     if (esNombreValido && esApellidoValido && esEmailValido && esPasswordValido && esConfirmPasswordValido && esTelefonoValido && esFechaValida && esGeneroValido) {
         let generoSeleccionado = '';
 
@@ -243,38 +248,55 @@ formulario.addEventListener('submit', function (event) {
             }
         }
 
-        const fechaNacimiento = `${selectDay.value}/${selectMonth.value}/${selectYear.value}`;
+        const fechaNacimiento = `${selectYear.value}-${selectMonth.value}-${selectDay.value}`;
         const nuevoUsuario = {
             nombre: inputNombre.value.trim(),
             apellido: inputApellido.value.trim(),
             correo: inputEmail.value.trim(),
+            email: inputEmail.value.trim(),
+            password: inputPassword.value.trim(),
             telefono: inputPhone.value.trim(),
             fechaNacimiento,
-            genero: generoSeleccionado,
-            contraseña: inputPassword.value.trim()
+            genero: generoSeleccionado
         };
 
-        const usuariosRegistrados = obtenerUsuariosRegistrados();
-        usuariosRegistrados.push(nuevoUsuario);
-        localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuariosRegistrados));
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nuevoUsuario)
+            });
 
-        contenedorExito.textContent = '';
-        const mensajeExito = document.createElement('p');
-        mensajeExito.className = 'msg-exito';
-        mensajeExito.style.color = 'green';
-        mensajeExito.textContent = `¡Registro completado con éxito, ${nuevoUsuario.nombre}! Datos persistidos.`;
-        contenedorExito.appendChild(mensajeExito);
+            if (!response.ok) {
+                const errorRespuesta = await response.json().catch(() => ({}));
+                throw new Error(errorRespuesta.message || errorRespuesta.mensaje || 'No se pudo registrar el usuario.');
+            }
 
-        renderUsuarios();
-        formulario.reset();
+            const resultado = await response.json();
+            const usuarioCreado = resultado.data || resultado;
+            const mensajeExito = document.createElement('p');
+            mensajeExito.className = 'msg-exito';
+            mensajeExito.style.color = 'green';
+            mensajeExito.textContent = `¡Registro completado con éxito, ${usuarioCreado.nombre}!`;
+            contenedorExito.appendChild(mensajeExito);
 
-        const inputs = [inputNombre, inputApellido, inputEmail, inputPassword, inputConfirmPassword, inputPhone, selectDay, selectMonth, selectYear];
-        inputs.forEach(input => {
-            input.classList.remove('input-success');
-            input.classList.remove('input-error');
-        });
-    } else {
-        contenedorExito.textContent = '';
+            renderUsuarios();
+            formulario.reset();
+
+            const inputs = [inputNombre, inputApellido, inputEmail, inputPassword, inputConfirmPassword, inputPhone, selectDay, selectMonth, selectYear];
+            inputs.forEach(input => {
+                input.classList.remove('input-success');
+                input.classList.remove('input-error');
+            });
+        } catch (error) {
+            const mensajeError = document.createElement('p');
+            mensajeError.className = 'msg-error';
+            mensajeError.style.color = 'red';
+            mensajeError.textContent = error.message;
+            contenedorExito.appendChild(mensajeError);
+        }
     }
 });
 
@@ -282,8 +304,15 @@ formulario.addEventListener('submit', function (event) {
 const usuariosSection = document.getElementById('usuarios-registrados-section');
 const listaUsuarios = document.getElementById('lista-usuarios');
 
-function renderUsuarios() {
-    const usuarios = obtenerUsuariosRegistrados();
+function formatearFecha(fecha) {
+    if (!fecha) return '';
+    const partes = fecha.split('-');
+    if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    return fecha;
+}
+
+async function renderUsuarios() {
+    const usuarios = await obtenerUsuariosRegistrados();
 
     if (usuarios.length > 0) {
         usuariosSection.style.display = 'block';
@@ -294,7 +323,7 @@ function renderUsuarios() {
             const apellido = usuario.apellido || '';
             const correo = usuario.correo || '';
             const telefono = usuario.telefono || '';
-            const fechaNacimiento = usuario.fechaNacimiento || '';
+            const fechaNacimiento = usuario.fechaNacimiento || usuario.fecha_nacimiento || '';
             const genero = usuario.genero || '';
             const li = document.createElement('li');
             li.style.padding = '10px';
@@ -308,7 +337,7 @@ function renderUsuarios() {
             contacto.textContent = `${correo} - ${telefono}`;
 
             const datosPersonales = document.createElement('small');
-            datosPersonales.textContent = `Fecha: ${fechaNacimiento} | Género: ${genero}`;
+            datosPersonales.textContent = `Fecha: ${formatearFecha(fechaNacimiento)} | Género: ${genero}`;
 
             li.appendChild(nombreCompleto);
             li.appendChild(crearSaltoLinea());
