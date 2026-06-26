@@ -10,6 +10,12 @@ const selectDay = document.getElementById('day');
 const selectMonth = document.getElementById('month');
 const selectYear = document.getElementById('year');
 const radiosGender = document.getElementsByName('gender');
+const CLAVE_USUARIOS = 'usuariosRegistrados';
+
+function obtenerUsuariosRegistrados() {
+    const usuarios = JSON.parse(localStorage.getItem(CLAVE_USUARIOS)) || [];
+    return Array.isArray(usuarios) ? usuarios : [];
+}
 
 // 2. Funciones de validación individuales (Uso de innerHTML y classList)
 function validarCampoVacio(input, elementoError, mensaje) {
@@ -159,21 +165,27 @@ formulario.addEventListener('submit', function (event) {
             }
         }
 
+        const fechaNacimiento = `${selectDay.value}/${selectMonth.value}/${selectYear.value}`;
+
         // Creamos el objeto con los datos del nuevo usuario
         const nuevoUsuario = {
             nombre: inputNombre.value.trim(),
             apellido: inputApellido.value.trim(),
             correo: inputEmail.value.trim(),
-            password: inputPassword.value.trim(),
-            telefono: inputPhone.value.trim()
+            telefono: inputPhone.value.trim(),
+            fechaNacimiento,
+            genero: generoSeleccionado,
+            contraseña: inputPassword.value.trim()
         };
 
-        // Guardamos el objeto en LocalStorage convirtiéndolo a texto plano
-        localStorage.setItem('usuarioRegistrado', JSON.stringify(nuevoUsuario));
+        const usuariosRegistrados = obtenerUsuariosRegistrados();
+        usuariosRegistrados.push(nuevoUsuario);
+        localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuariosRegistrados));
 
         // Mostramos el mensaje de éxito dinámicamente
         contenedorExito.innerHTML = `<p class="msg-exito" style="color: green;">¡Registro completado con éxito, ${nuevoUsuario.nombre}! Datos persistidos.</p>`;
 
+        renderUsuarios();
         formulario.reset(); // Resetea el formulario de forma interactiva
 
         // Aqui se limpian los estilos visuales de éxito de los bordes
@@ -192,18 +204,24 @@ const usuariosSection = document.getElementById('usuarios-registrados-section');
 const listaUsuarios = document.getElementById('lista-usuarios');
 
 function renderUsuarios() {
-    const usuarios = JSON.parse(localStorage.getItem('usuariosRegistrados')) || [];
+    const usuarios = obtenerUsuariosRegistrados();
     if (usuarios.length > 0) {
         usuariosSection.style.display = 'block';
         listaUsuarios.innerHTML = '';
         usuarios.forEach((usuario, index) => {
+            const nombre = usuario.nombre || '';
+            const apellido = usuario.apellido || '';
+            const correo = usuario.correo || '';
+            const telefono = usuario.telefono || '';
+            const fechaNacimiento = usuario.fechaNacimiento || '';
+            const genero = usuario.genero || '';
             const li = document.createElement('li');
             li.style.padding = '10px';
             li.style.borderBottom = '1px solid #eee';
             li.style.marginBottom = '5px';
-            li.innerHTML = `<strong>${usuario.nombre} ${usuario.apellido}</strong><br>
-                            <small>${usuario.correo} - ${usuario.telefono}</small><br>
-                            <small>Fecha: ${usuario.fechaNacimiento} | Género: ${usuario.genero}</small>`;
+            li.innerHTML = `<strong>${nombre} ${apellido}</strong><br>
+                            <small>${correo} - ${telefono}</small><br>
+                            <small>Fecha: ${fechaNacimiento} | Género: ${genero}</small>`;
             listaUsuarios.appendChild(li);
         });
     } else {
