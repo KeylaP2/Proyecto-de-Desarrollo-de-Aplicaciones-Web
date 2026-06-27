@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS usuarios;
+
+CREATE TABLE usuarios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT NOT NULL,
+  apellido TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  telefono TEXT NOT NULL,
+  fecha_nacimiento TEXT NOT NULL,
+  genero TEXT NOT NULL,
+  password TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
