@@ -6,6 +6,7 @@ const session = require("express-session");
 const usuarioRoutes = require("./routes/usuario.routes");
 const authRoutes = require("./routes/auth.routes");
 const carritoRoutes = require("./routes/carrito.routes");
+const adminRoutes = require("./routes/admin.routes");
 const errorHandler = require("./middleware/errorHandler");
 const notFoundHandler = require("./middleware/notFoundHandler");
 const { corsOrigin, sessionSecret, isProduction } = require("./config/env");
@@ -47,7 +48,8 @@ app.get("/", (req, res) => {
       health: "/health",
       usuarios: "/api/usuarios",
       autenticacion: "/api/auth",
-      carrito: "/api/carrito"
+      carrito: "/api/carrito",
+      administracion: "/api/admin"
     }
   });
 });
@@ -63,6 +65,7 @@ app.get("/health", (req, res) => {
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/carrito", carritoRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

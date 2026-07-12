@@ -15,8 +15,13 @@ formularioLogin.addEventListener("submit", async (evento) => {
         const resultado = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(resultado.message || "No fue posible iniciar sesión.");
         mensajeLogin.classList.add("msg-exito");
-        mensajeLogin.textContent = `Bienvenido/a, ${resultado.data.nombre}. Redirigiendo...`;
-        window.setTimeout(() => { window.location.href = "index.html"; }, 500);
+        const esAdministrador = resultado.data.role === "admin";
+        mensajeLogin.textContent = esAdministrador
+            ? "Acceso administrativo correcto. Abriendo el panel..."
+            : `Bienvenido/a, ${resultado.data.nombre}. Redirigiendo...`;
+        window.setTimeout(() => {
+            window.location.href = esAdministrador ? "admin.html" : "index.html";
+        }, 500);
     } catch (error) {
         mensajeLogin.classList.add("msg-error");
         mensajeLogin.textContent = error.message;

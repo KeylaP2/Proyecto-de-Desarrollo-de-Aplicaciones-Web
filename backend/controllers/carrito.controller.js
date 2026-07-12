@@ -12,6 +12,9 @@ const esItemValido = (item) => item
 
 const getCarrito = async (req, res, next) => {
   try {
+    if (req.session.admin) {
+      return res.json({ data: Array.isArray(req.session.adminCart) ? req.session.adminCart : [] });
+    }
     const items = await Carrito.findByUsuarioId(req.session.usuario.id);
     return res.json({ data: items });
   } catch (error) {
@@ -24,6 +27,10 @@ const guardarCarrito = async (req, res, next) => {
     const { items } = req.body;
     if (!Array.isArray(items) || items.length > 50 || !items.every(esItemValido)) {
       return res.status(400).json({ message: "El carrito contiene datos no válidos." });
+    }
+    if (req.session.admin) {
+      req.session.adminCart = items;
+      return res.json({ data: items });
     }
     await Carrito.saveByUsuarioId(req.session.usuario.id, items);
     return res.json({ data: items });

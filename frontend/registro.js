@@ -11,21 +11,6 @@ const selectMonth = document.getElementById('month');
 const selectYear = document.getElementById('year');
 const radiosGender = document.getElementsByName('gender');
 const API_URL = `http://${window.location.hostname}:3000/api/usuarios`;
-const botonEnviar = formulario.querySelector('button[type="submit"]');
-const botonCancelarEdicion = document.getElementById('cancelar-edicion');
-let idUsuarioEnEdicion = null;
-
-async function obtenerUsuariosRegistrados() {
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('No se pudo cargar la lista de usuarios.');
-        const resultado = await response.json();
-        return Array.isArray(resultado.data) ? resultado.data : [];
-    } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        return [];
-    }
-}
 
 function mostrarError(elementoError, mensaje) {
     elementoError.textContent = mensaje;
@@ -43,10 +28,6 @@ function marcarCampoValido(input) {
 function marcarCampoInvalido(input) {
     input.classList.add('input-error');
     input.classList.remove('input-success');
-}
-
-function crearSaltoLinea() {
-    return document.createElement('br');
 }
 
 function poblarSelect(select, inicio, fin, pad = false) {
@@ -229,17 +210,11 @@ for (const radio of radiosGender) {
 formulario.addEventListener('submit', async function (event) {
     event.preventDefault();
 
-    const esEdicion = idUsuarioEnEdicion !== null;
-    const seEstaCambiandoPassword = inputPassword.value.trim() !== '' || inputConfirmPassword.value.trim() !== '';
     const esNombreValido = validarCampoVacio(inputNombre, document.getElementById('error-firstname'), 'El nombre es obligatorio.');
     const esApellidoValido = validarCampoVacio(inputApellido, document.getElementById('error-lastname'), 'El apellido es obligatorio.');
     const esEmailValido = validarEmail(inputEmail, document.getElementById('error-email'));
-    const esPasswordValido = !esEdicion || seEstaCambiandoPassword
-        ? validarPassword(inputPassword, document.getElementById('error-password'))
-        : true;
-    const esConfirmPasswordValido = !esEdicion || seEstaCambiandoPassword
-        ? validarConfirmarPassword(inputConfirmPassword, inputPassword, document.getElementById('error-confirm-password'))
-        : true;
+    const esPasswordValido = validarPassword(inputPassword, document.getElementById('error-password'));
+    const esConfirmPasswordValido = validarConfirmarPassword(inputConfirmPassword, inputPassword, document.getElementById('error-confirm-password'));
     const esTelefonoValido = validarTelefono(inputPhone, document.getElementById('error-phone'));
     const esFechaValida = validarFecha(document.getElementById('error-fecha'));
     const esGeneroValido = validarGenero(document.getElementById('error-gender'));
@@ -263,15 +238,15 @@ formulario.addEventListener('submit', async function (event) {
             apellido: inputApellido.value.trim(),
             correo: inputEmail.value.trim(),
             email: inputEmail.value.trim(),
-            ...(seEstaCambiandoPassword && { password: inputPassword.value.trim() }),
+            password: inputPassword.value.trim(),
             telefono: inputPhone.value.trim(),
             fechaNacimiento,
             genero: generoSeleccionado
         };
 
         try {
-            const response = await fetch(esEdicion ? `${API_URL}/${idUsuarioEnEdicion}` : API_URL, {
-                method: esEdicion ? 'PUT' : 'POST',
+            const response = await fetch(API_URL, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -288,13 +263,9 @@ formulario.addEventListener('submit', async function (event) {
             const mensajeExito = document.createElement('p');
             mensajeExito.className = 'msg-exito';
             mensajeExito.style.color = 'green';
-            mensajeExito.textContent = esEdicion
-                ? `¡Los datos de ${usuarioGuardado.nombre} fueron actualizados correctamente!`
-                : `¡Registro completado con éxito, ${usuarioGuardado.nombre}!`;
+            mensajeExito.textContent = `¡Registro completado con éxito, ${usuarioGuardado.nombre}!`;
             contenedorExito.appendChild(mensajeExito);
-
-            renderUsuarios();
-            cancelarEdicion();
+            limpiarEstadoFormulario();
         } catch (error) {
             const mensajeError = document.createElement('p');
             mensajeError.className = 'msg-error';
@@ -316,132 +287,3 @@ function limpiarEstadoFormulario() {
         elemento.textContent = '';
     });
 }
-
-function cancelarEdicion() {
-    idUsuarioEnEdicion = null;
-    limpiarEstadoFormulario();
-    botonEnviar.textContent = 'Sign Up';
-    botonCancelarEdicion.classList.add('d-none');
-}
-
-function cargarUsuarioEnFormulario(usuario) {
-    idUsuarioEnEdicion = usuario.id;
-    inputNombre.value = usuario.nombre || '';
-    inputApellido.value = usuario.apellido || '';
-    inputEmail.value = usuario.email || usuario.correo || '';
-    inputPhone.value = usuario.telefono || '';
-
-    const fechaNacimiento = usuario.fechaNacimiento || usuario.fecha_nacimiento || '';
-    const [year, month, day] = fechaNacimiento.split('-');
-    selectYear.value = year || '';
-    selectMonth.value = month || '';
-    selectDay.value = day || '';
-
-    for (const radio of radiosGender) {
-        radio.checked = radio.value === usuario.genero;
-    }
-
-    inputPassword.value = '';
-    inputConfirmPassword.value = '';
-    botonEnviar.textContent = 'Actualizar usuario';
-    botonCancelarEdicion.classList.remove('d-none');
-    document.getElementById('form-mensaje').textContent = 'Edita los datos necesarios. Deja la contraseña vacía si deseas conservar la actual.';
-    formulario.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-async function eliminarUsuario(usuario) {
-    const confirmar = window.confirm(`¿Deseas eliminar a ${usuario.nombre} ${usuario.apellido}?`);
-
-    if (!confirmar) return;
-
-    try {
-        const response = await fetch(`${API_URL}/${usuario.id}`, { method: 'DELETE' });
-
-        if (!response.ok) {
-            const errorRespuesta = await response.json().catch(() => ({}));
-            throw new Error(errorRespuesta.message || 'No se pudo eliminar el usuario.');
-        }
-
-        if (idUsuarioEnEdicion === usuario.id) cancelarEdicion();
-        await renderUsuarios();
-    } catch (error) {
-        const contenedorMensaje = document.getElementById('form-mensaje');
-        contenedorMensaje.textContent = error.message;
-        contenedorMensaje.className = 'my-3 text-center fw-bold msg-error';
-    }
-}
-
-botonCancelarEdicion.addEventListener('click', cancelarEdicion);
-
-// Renderizar la lista de usuarios
-const usuariosSection = document.getElementById('usuarios-registrados-section');
-const listaUsuarios = document.getElementById('lista-usuarios');
-
-function formatearFecha(fecha) {
-    if (!fecha) return '';
-    const partes = fecha.split('-');
-    if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    return fecha;
-}
-
-async function renderUsuarios() {
-    const usuarios = await obtenerUsuariosRegistrados();
-
-    if (usuarios.length > 0) {
-        usuariosSection.style.display = 'block';
-        listaUsuarios.textContent = '';
-
-        usuarios.forEach(usuario => {
-            const nombre = usuario.nombre || '';
-            const apellido = usuario.apellido || '';
-            const correo = usuario.correo || '';
-            const telefono = usuario.telefono || '';
-            const fechaNacimiento = usuario.fechaNacimiento || usuario.fecha_nacimiento || '';
-            const genero = usuario.genero || '';
-            const li = document.createElement('li');
-            li.style.padding = '10px';
-            li.style.borderBottom = '1px solid #eee';
-            li.style.marginBottom = '5px';
-
-            const nombreCompleto = document.createElement('strong');
-            nombreCompleto.textContent = `${nombre} ${apellido}`;
-
-            const contacto = document.createElement('small');
-            contacto.textContent = `${correo} - ${telefono}`;
-
-            const datosPersonales = document.createElement('small');
-            datosPersonales.textContent = `Fecha: ${formatearFecha(fechaNacimiento)} | Género: ${genero}`;
-
-            li.appendChild(nombreCompleto);
-            li.appendChild(crearSaltoLinea());
-            li.appendChild(contacto);
-            li.appendChild(crearSaltoLinea());
-            li.appendChild(datosPersonales);
-
-            const acciones = document.createElement('div');
-            acciones.className = 'd-flex gap-2 mt-2';
-
-            const botonEditar = document.createElement('button');
-            botonEditar.type = 'button';
-            botonEditar.className = 'btn btn-sm btn-outline-primary';
-            botonEditar.textContent = 'Editar';
-            botonEditar.addEventListener('click', () => cargarUsuarioEnFormulario(usuario));
-
-            const botonEliminar = document.createElement('button');
-            botonEliminar.type = 'button';
-            botonEliminar.className = 'btn btn-sm btn-outline-danger';
-            botonEliminar.textContent = 'Eliminar';
-            botonEliminar.addEventListener('click', () => eliminarUsuario(usuario));
-
-            acciones.appendChild(botonEditar);
-            acciones.appendChild(botonEliminar);
-            li.appendChild(acciones);
-            listaUsuarios.appendChild(li);
-        });
-    } else {
-        usuariosSection.style.display = 'none';
-        listaUsuarios.textContent = '';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', renderUsuarios);

@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const Usuario = require("../models/usuario.model");
+const Admin = require("../models/admin.model");
 
 const intentosFallidos = new Map();
 const MAX_INTENTOS = 5;
@@ -43,6 +44,7 @@ const login = async (req, res, next) => {
     if (bloquearSiCorresponde(req, email, res)) return;
 
     const usuario = await Usuario.findByEmailWithPassword(email);
+    const administrador = usuario ? null : await Admin.findByEmailWithPassword(email);
     let esValida = false;
 
     if (usuario) {
@@ -55,6 +57,22 @@ const login = async (req, res, next) => {
         esValida = passwordBuffer.length === storedPasswordBuffer.length
           && crypto.timingSafeEqual(passwordBuffer, storedPasswordBuffer);
         if (esValida) await Usuario.updatePassword(usuario.id, await bcrypt.hash(password, 12));
+      }
+    }
+
+    if (!usuario && administrador?.activo) {
+      esValida = await bcrypt.compare(password, administrador.password);
+      if (esValida) {
+        intentosFallidos.delete(claveIntentos(req, email));
+        return req.session.regenerate((error) => {
+          if (error) return next(error);
+          req.session.admin = {
+            id: administrador.id,
+            email: administrador.email,
+            role: administrador.role
+          };
+          return res.json({ data: req.session.admin });
+        });
       }
     }
 
