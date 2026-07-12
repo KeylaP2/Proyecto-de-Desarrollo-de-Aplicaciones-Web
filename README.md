@@ -86,7 +86,9 @@ La configuración predeterminada es:
 ```env
 PORT=3000
 DB_FILE=database/mibase.db
-CORS_ORIGIN=*
+CORS_ORIGIN=http://127.0.0.1:5500,http://localhost:5500
+SESSION_SECRET=usa-una-clave-larga-aleatoria-y-secreta
+NODE_ENV=development
 ```
 
 ### 4. Inicializar la base de datos
@@ -197,6 +199,15 @@ Ctrl + C
 
 - `GET /health`: comprueba el estado del servidor.
 - `/api/usuarios`: operaciones relacionadas con los usuarios.
+- `POST /api/auth/login`: inicia una sesión con correo y contraseña.
+- `POST /api/auth/logout`: cierra la sesión actual.
+- `GET /api/auth/me`: devuelve el usuario de la sesión activa.
+- `GET /api/carrito`: obtiene el carrito del usuario autenticado.
+- `PUT /api/carrito`: guarda el carrito del usuario autenticado.
+
+## Autenticación
+
+Las contraseñas nuevas se almacenan con hash `bcrypt` y nunca se devuelven desde la API. La sesión se guarda en una cookie `HttpOnly`, con una duración de dos horas. Cada carrito se almacena en SQLite asociado al usuario autenticado, por lo que se recupera tras cerrar sesión e iniciar sesión nuevamente. Configura una clave única y secreta en `SESSION_SECRET` antes de publicar el proyecto.
 
 ## Solución de problemas
 

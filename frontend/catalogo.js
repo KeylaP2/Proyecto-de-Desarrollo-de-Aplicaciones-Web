@@ -4,20 +4,15 @@ const botonesAgregar = document.querySelectorAll('.add-btn');
 const filtrosMarca = document.querySelectorAll('.filter-group input[type="radio"]');
 const tarjetasProductos = document.querySelectorAll('.product-card');
 const CLAVE_CARRITO = 'carritoSoloTenis';
+const API_CARRITO_URL = `http://${window.location.hostname}:3000/api/carrito`;
 const TALLAS_DISPONIBLES = ['38', '39', '40', '41', '42', '43', '44'];
 const GENEROS_DISPONIBLES = ['Hombre', 'Mujer', 'Unisex'];
 const STOCK_PREDETERMINADO = 12;
 let modalCarrito;
 let modalConfiguracion;
+let usuarioAutenticado = null;
 
 let carrito = [];
-
-try {
-    const carritoGuardado = JSON.parse(localStorage.getItem(CLAVE_CARRITO)) || [];
-    carrito = Array.isArray(carritoGuardado) ? carritoGuardado : [];
-} catch (error) {
-    carrito = [];
-}
 
 function actualizarNumeroContador() {
     const totalArticulos = carrito.reduce((acumulador, producto) => acumulador + producto.cantidad, 0);
@@ -49,8 +44,40 @@ function actualizarEstadoBotones() {
     });
 }
 
-function guardarCarrito() {
-    localStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito));
+async function guardarCarrito() {
+    if (!usuarioAutenticado) return;
+
+    try {
+        const response = await fetch(API_CARRITO_URL, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: carrito })
+        });
+        if (!response.ok) throw new Error('No se pudo guardar el carrito.');
+    } catch (error) {
+        console.error('Error al guardar el carrito:', error);
+    }
+}
+
+async function cargarCarritoDelUsuario(usuario) {
+    usuarioAutenticado = usuario;
+    carrito = [];
+    localStorage.removeItem(CLAVE_CARRITO);
+
+    if (usuario) {
+        try {
+            const response = await fetch(API_CARRITO_URL, { credentials: 'include' });
+            if (!response.ok) throw new Error('No se pudo cargar el carrito.');
+            const resultado = await response.json();
+            carrito = Array.isArray(resultado.data) ? resultado.data : [];
+        } catch (error) {
+            console.error('Error al cargar el carrito:', error);
+        }
+    }
+
+    actualizarNumeroContador();
+    actualizarEstadoBotones();
 }
 
 function obtenerPrecioNumerico(textoPrecio) {
@@ -160,6 +187,12 @@ function abrirConfiguracionProducto(tarjeta) {
 }
 
 function procesarAñadirCarrito(evento) {
+    if (!usuarioAutenticado) {
+        window.alert('Inicia sesión para añadir productos y guardar tu carrito.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     const tarjeta = evento.currentTarget.closest('.product-card');
 
     if (!tarjeta) {
@@ -420,9 +453,18 @@ filtrosMarca.forEach(filtro => {
 if (enlaceCarrito) {
     enlaceCarrito.addEventListener('click', evento => {
         evento.preventDefault();
+        if (!usuarioAutenticado) {
+            window.alert('Inicia sesión para ver tu carrito.');
+            window.location.href = 'login.html';
+            return;
+        }
         abrirCarrito();
     });
 }
+
+document.addEventListener('sesion-cargada', evento => {
+    cargarCarritoDelUsuario(evento.detail);
+});
 
 actualizarNumeroContador();
 actualizarEstadoBotones();

@@ -1,4 +1,5 @@
 const Usuario = require("../models/usuario.model");
+const bcrypt = require("bcryptjs");
 
 const camposObligatorios = [
   "nombre",
@@ -7,6 +8,8 @@ const camposObligatorios = [
   "fechaNacimiento",
   "genero"
 ];
+const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordValida = (password) => typeof password === "string" && password.length >= 8;
 
 const faltanCamposObligatorios = (body) => {
   return camposObligatorios.some((campo) => !body[campo]) || !(body.email || body.correo);
@@ -46,6 +49,13 @@ const createUsuario = async (req, res, next) => {
       });
     }
 
+    if (!emailValido.test(email) || !passwordValida(password)) {
+      return res.status(400).json({
+        message: "El correo debe ser válido y la contraseña debe tener al menos 8 caracteres."
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
     const usuario = await Usuario.create({
       nombre,
       apellido,
@@ -53,7 +63,7 @@ const createUsuario = async (req, res, next) => {
       telefono,
       fechaNacimiento,
       genero,
-      password
+      password: passwordHash
     });
     return res.status(201).json({ data: usuario });
   } catch (error) {
@@ -72,6 +82,13 @@ const updateUsuario = async (req, res, next) => {
       });
     }
 
+    if (!emailValido.test(email) || (password && !passwordValida(password))) {
+      return res.status(400).json({
+        message: "El correo debe ser válido y la nueva contraseña debe tener al menos 8 caracteres."
+      });
+    }
+
+    const passwordHash = password ? await bcrypt.hash(password, 12) : undefined;
     const result = await Usuario.update(req.params.id, {
       nombre,
       apellido,
@@ -79,7 +96,7 @@ const updateUsuario = async (req, res, next) => {
       telefono,
       fechaNacimiento,
       genero,
-      password: password || undefined
+      password: passwordHash
     });
 
     if (result.changes === 0) {

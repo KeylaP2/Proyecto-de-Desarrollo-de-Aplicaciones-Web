@@ -10,7 +10,7 @@ const selectDay = document.getElementById('day');
 const selectMonth = document.getElementById('month');
 const selectYear = document.getElementById('year');
 const radiosGender = document.getElementsByName('gender');
-const API_URL = 'http://localhost:3000/api/usuarios';
+const API_URL = `http://${window.location.hostname}:3000/api/usuarios`;
 const botonEnviar = formulario.querySelector('button[type="submit"]');
 const botonCancelarEdicion = document.getElementById('cancelar-edicion');
 let idUsuarioEnEdicion = null;
@@ -104,7 +104,7 @@ function validarEmail(input, elementoError) {
 function validarPassword(input, elementoError) {
     if (input.value.trim() === '') {
         return validarCampoVacio(input, elementoError, 'La contraseña es obligatoria.');
-    } else if (input.value.length < 6) {
+    } else if (input.value.length < 8) {
         mostrarError(elementoError, 'La contraseña debe tener al menos 6 caracteres.');
         marcarCampoInvalido(input);
         return false;

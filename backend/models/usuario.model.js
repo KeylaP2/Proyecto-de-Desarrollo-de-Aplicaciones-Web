@@ -30,6 +30,30 @@ const findById = (id) => {
   });
 };
 
+const findByEmailWithPassword = (email) => {
+  const sql = `
+    SELECT id, nombre, apellido, email, password
+    FROM usuarios
+    WHERE lower(email) = lower(?)
+  `;
+
+  return new Promise((resolve, reject) => {
+    db.get(sql, [email], (error, row) => {
+      if (error) reject(error);
+      else resolve(row);
+    });
+  });
+};
+
+const updatePassword = (id, password) => {
+  return new Promise((resolve, reject) => {
+    db.run("UPDATE usuarios SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [password, id], function handleUpdate(error) {
+      if (error) reject(error);
+      else resolve({ changes: this.changes });
+    });
+  });
+};
+
 const create = ({ nombre, apellido, email, telefono, fechaNacimiento, genero, password }) => {
   const sql = `
     INSERT INTO usuarios (nombre, apellido, email, telefono, fecha_nacimiento, genero, password)
@@ -97,7 +121,9 @@ const remove = (id) => {
 module.exports = {
   findAll,
   findById,
+  findByEmailWithPassword,
   create,
   update,
+  updatePassword,
   remove
 };

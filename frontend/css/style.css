@@ -18,6 +18,42 @@ body {
     color: #ffffff;
 }
 
+.main-header .container {
+    position: relative;
+}
+
+.auth-navigation {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: absolute;
+    right: 0;
+    top: 1.25rem;
+}
+
+.auth-name {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.auth-action {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.35rem 0.65rem;
+    text-decoration: none;
+}
+
+.auth-action:hover {
+    background: var(--acento);
+    border-color: var(--acento);
+    color: var(--primario);
+}
+
 .main-title {
     letter-spacing: 0;
 }
@@ -44,6 +80,10 @@ body {
     background-color: var(--acento);
     border-color: var(--acento);
     color: var(--primario);
+}
+
+.nav-logout:hover {
+    cursor: pointer;
 }
 
 .filters-sidebar,
@@ -256,6 +296,14 @@ body {
     min-height: 100vh;
 }
 
+.login-main {
+    min-height: calc(100vh - 148px);
+}
+
+.login-card {
+    max-width: 460px;
+}
+
 .form-header {
     border-bottom: 1px solid var(--borde);
 }
@@ -331,6 +379,11 @@ select.success {
     .navbar-nav,
     .navbar .nav-link {
         width: 100%;
+    }
+
+    .auth-navigation {
+        right: 0.75rem;
+        top: 0.75rem;
     }
 
     .cart-item {

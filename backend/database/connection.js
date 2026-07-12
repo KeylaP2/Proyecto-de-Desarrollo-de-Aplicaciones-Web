@@ -13,6 +13,16 @@ const db = new sqlite3.Database(databasePath, (error) => {
   console.log(`Conexion SQLite establecida: ${databasePath}`);
 });
 
-db.run("PRAGMA foreign_keys = ON");
+db.serialize(() => {
+  db.run("PRAGMA foreign_keys = ON");
+  db.run(`
+    CREATE TABLE IF NOT EXISTS carritos (
+      usuario_id INTEGER PRIMARY KEY,
+      items TEXT NOT NULL DEFAULT '[]',
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    )
+  `);
+});
 
 module.exports = db;
