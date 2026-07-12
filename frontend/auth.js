@@ -24,7 +24,7 @@ async function obtenerSesion() {
 async function cerrarSesion() {
     try {
         const urlLogout = tipoSesionActual === "admin" ? ADMIN_AUTH_API_URL : AUTH_API_URL;
-        await fetch(`${urlLogout}/logout`, { method: "POST", credentials: "include" });
+        await csrfFetch(`${urlLogout}/logout`, { method: "POST" });
     } finally {
         window.location.href = "index.html";
     }

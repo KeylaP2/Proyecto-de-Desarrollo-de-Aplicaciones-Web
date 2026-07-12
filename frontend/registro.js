@@ -245,7 +245,7 @@ formulario.addEventListener('submit', async function (event) {
         };
 
         try {
-            const response = await fetch(API_URL, {
+            const response = await csrfFetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

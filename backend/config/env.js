@@ -14,6 +14,7 @@ if (isProduction && (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD)) {
 module.exports = {
   port: process.env.PORT || 3000,
   dbFile: process.env.DB_FILE || "database/mibase.db",
+  sessionDbFile: process.env.SESSION_DB_FILE || "database/sessions.db",
   corsOrigin: process.env.CORS_ORIGIN || "http://127.0.0.1:5500,http://localhost:5500",
   sessionSecret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex"),
   adminEmail: process.env.ADMIN_EMAIL || "",

@@ -27,3 +27,9 @@ CREATE TABLE IF NOT EXISTS administradores (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+  attempt_key TEXT PRIMARY KEY,
+  attempts INTEGER NOT NULL DEFAULT 1,
+  first_attempt INTEGER NOT NULL
+);

@@ -21,7 +21,7 @@ formularioAdmin.addEventListener('submit', async evento => {
     boton.disabled = true;
     boton.textContent = 'Verificando…';
     try {
-        const response = await fetch(`${ADMIN_API_URL}/login`, {
+        const response = await csrfFetch(`${ADMIN_API_URL}/login`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },

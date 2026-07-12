@@ -62,7 +62,7 @@ async function guardarCarrito() {
     if (!usuarioAutenticado) return;
 
     try {
-        const response = await fetch(API_CARRITO_URL, {
+        const response = await csrfFetch(API_CARRITO_URL, {
             method: 'PUT',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
@@ -103,7 +103,7 @@ function esUrlImagenValida(url) {
     try {
         const direccion = new URL(url, window.location.href);
         return ['http:', 'https:', 'data:', 'blob:'].includes(direccion.protocol);
-    } catch (error) {
+    } catch {
         return false;
     }
 }

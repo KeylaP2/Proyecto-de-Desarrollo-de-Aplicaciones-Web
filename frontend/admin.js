@@ -83,7 +83,7 @@ function renderizarUsuarios() {
 }
 
 async function solicitudAdmin(ruta, opciones = {}) {
-    const response = await fetch(`${ADMIN_API_URL}${ruta}`, { credentials: 'include', ...opciones });
+    const response = await csrfFetch(`${ADMIN_API_URL}${ruta}`, opciones);
     if (response.status === 401) {
         window.location.replace('admin-login.html');
         throw new Error('La sesión administrativa expiró.');
@@ -167,7 +167,7 @@ formularioUsuario.addEventListener('submit', async evento => {
 });
 
 document.getElementById('admin-logout').addEventListener('click', async () => {
-    await fetch(`${ADMIN_API_URL}/logout`, { method: 'POST', credentials: 'include' }).catch(() => null);
+    await csrfFetch(`${ADMIN_API_URL}/logout`, { method: 'POST' }).catch(() => null);
     window.location.replace('admin-login.html');
 });
 document.getElementById('new-user').addEventListener('click', () => abrirModalUsuario());

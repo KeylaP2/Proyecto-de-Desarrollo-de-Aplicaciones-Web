@@ -2,31 +2,12 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const Usuario = require("../models/usuario.model");
 const Admin = require("../models/admin.model");
+const LoginAttempt = require("../models/loginAttempt.model");
 
-const intentosFallidos = new Map();
 const MAX_INTENTOS = 5;
 const VENTANA_MS = 15 * 60 * 1000;
 
 const claveIntentos = (req, email) => `${req.ip}:${email}`;
-
-const bloquearSiCorresponde = (req, email, res) => {
-  const intento = intentosFallidos.get(claveIntentos(req, email));
-  if (intento && intento.count >= MAX_INTENTOS && Date.now() - intento.firstAttempt < VENTANA_MS) {
-    res.status(429).json({ message: "Demasiados intentos. Espera 15 minutos e inténtalo de nuevo." });
-    return true;
-  }
-  return false;
-};
-
-const registrarFallo = (req, email) => {
-  const clave = claveIntentos(req, email);
-  const anterior = intentosFallidos.get(clave);
-  if (!anterior || Date.now() - anterior.firstAttempt >= VENTANA_MS) {
-    intentosFallidos.set(clave, { count: 1, firstAttempt: Date.now() });
-  } else {
-    anterior.count += 1;
-  }
-};
 
 const datosPublicos = (usuario) => ({
   id: usuario.id,
@@ -41,7 +22,11 @@ const login = async (req, res, next) => {
     const password = String(req.body.password || "");
 
     if (!email || !password) return res.status(400).json({ message: "El correo y la contraseña son obligatorios." });
-    if (bloquearSiCorresponde(req, email, res)) return;
+    const clave = claveIntentos(req, email);
+    const intento = await LoginAttempt.find(clave);
+    if (intento && intento.attempts >= MAX_INTENTOS && Date.now() - intento.first_attempt < VENTANA_MS) {
+      return res.status(429).json({ message: "Demasiados intentos. Espera 15 minutos e inténtalo de nuevo." });
+    }
 
     const usuario = await Usuario.findByEmailWithPassword(email);
     const administrador = usuario ? null : await Admin.findByEmailWithPassword(email);
@@ -63,7 +48,7 @@ const login = async (req, res, next) => {
     if (!usuario && administrador?.activo) {
       esValida = await bcrypt.compare(password, administrador.password);
       if (esValida) {
-        intentosFallidos.delete(claveIntentos(req, email));
+        await LoginAttempt.clear(clave);
         return req.session.regenerate((error) => {
           if (error) return next(error);
           req.session.admin = {
@@ -77,11 +62,11 @@ const login = async (req, res, next) => {
     }
 
     if (!esValida) {
-      registrarFallo(req, email);
+      await LoginAttempt.recordFailure(clave, VENTANA_MS);
       return res.status(401).json({ message: "Correo o contraseña incorrectos." });
     }
 
-    intentosFallidos.delete(claveIntentos(req, email));
+    await LoginAttempt.clear(clave);
     return req.session.regenerate((error) => {
       if (error) return next(error);
       req.session.usuario = datosPublicos(usuario);

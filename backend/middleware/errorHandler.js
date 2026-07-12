@@ -1,4 +1,4 @@
-const errorHandler = (error, req, res, next) => {
+const errorHandler = (error, req, res, _next) => {
   console.error(error);
 
   if (error.code === "SQLITE_CONSTRAINT") {

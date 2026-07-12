@@ -11,7 +11,7 @@ formularioLogin.addEventListener("submit", async (evento) => {
     mensajeLogin.textContent = "";
     boton.disabled = true;
     try {
-        const response = await fetch(API_LOGIN_URL, { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+        const response = await csrfFetch(API_LOGIN_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
         const resultado = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(resultado.message || "No fue posible iniciar sesión.");
         mensajeLogin.classList.add("msg-exito");

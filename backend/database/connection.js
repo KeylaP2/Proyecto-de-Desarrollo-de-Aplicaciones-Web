@@ -23,6 +23,13 @@ db.serialize(() => {
       FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
     )
   `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS login_attempts (
+      attempt_key TEXT PRIMARY KEY,
+      attempts INTEGER NOT NULL DEFAULT 1,
+      first_attempt INTEGER NOT NULL
+    )
+  `);
 });
 
 module.exports = db;

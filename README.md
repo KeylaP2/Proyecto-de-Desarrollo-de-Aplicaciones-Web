@@ -4,19 +4,6 @@ SoloTenisRD es una aplicación web para la venta y promoción de tenis deportivo
 
 Este proyecto fue desarrollado como parte de la asignatura Desarrollo de Aplicaciones Web.
 
-
-Lo primero que debes hacer : 
-
-### 4. Inicializar la base de datos
-
-Ejecuta este comando dentro de `backend`:
-
-```bash
-npm run init-db
-```
-
-Este comando crea o prepara la base de datos SQLite en `backend/database/mibase.db`.
-
 ## Estructura del proyecto
 
 ```text
@@ -45,7 +32,7 @@ Proyecto-de-Desarrollo-de-Aplicaciones-Web/
 
 Antes de comenzar, instala:
 
-- [Node.js](https://nodejs.org/) y npm.
+- [Node.js](https://nodejs.org/) 20.17 o posterior y npm.
 - Un navegador web moderno.
 - Git, solamente si vas a clonar el repositorio.
 
@@ -99,9 +86,12 @@ La configuración predeterminada es:
 ```env
 PORT=3000
 DB_FILE=database/mibase.db
+SESSION_DB_FILE=database/sessions.db
 CORS_ORIGIN=http://127.0.0.1:5500,http://localhost:5500
 SESSION_SECRET=usa-una-clave-larga-aleatoria-y-secreta
 NODE_ENV=development
+ADMIN_EMAIL=admin@ejemplo.com
+ADMIN_PASSWORD=usa-una-contrasena-larga-unica-y-segura
 ```
 
 ### 4. Inicializar la base de datos
@@ -113,6 +103,7 @@ npm run init-db
 ```
 
 Este comando crea o prepara la base de datos SQLite en `backend/database/mibase.db`.
+También crea o actualiza el administrador definido en `.env`, almacenando su contraseña con bcrypt. Las sesiones persistentes se guardan separadamente en `backend/database/sessions.db`.
 
 ## Cómo ejecutar la aplicación
 
@@ -217,10 +208,28 @@ Ctrl + C
 - `GET /api/auth/me`: devuelve el usuario de la sesión activa.
 - `GET /api/carrito`: obtiene el carrito del usuario autenticado.
 - `PUT /api/carrito`: guarda el carrito del usuario autenticado.
+- `GET /api/security/csrf`: genera el token de protección CSRF de la sesión.
+- `/api/admin`: autenticación y CRUD protegido del panel administrativo.
 
 ## Autenticación
 
-Las contraseñas nuevas se almacenan con hash `bcrypt` y nunca se devuelven desde la API. La sesión se guarda en una cookie `HttpOnly`, con una duración de dos horas. Cada carrito se almacena en SQLite asociado al usuario autenticado, por lo que se recupera tras cerrar sesión e iniciar sesión nuevamente. Configura una clave única y secreta en `SESSION_SECRET` antes de publicar el proyecto.
+Las contraseñas se almacenan con hash `bcrypt` y nunca se devuelven desde la API. Las sesiones se guardan en SQLite y se identifican mediante una cookie `HttpOnly`, `SameSite=Lax` y segura en producción, con duración de dos horas. Las operaciones que modifican datos requieren un token CSRF. Helmet añade encabezados HTTP de seguridad y los intentos fallidos se limitan de forma persistente. Configura valores únicos en `SESSION_SECRET`, `ADMIN_EMAIL` y `ADMIN_PASSWORD` antes de publicar el proyecto.
+
+## Calidad y comprobaciones
+
+Desde `backend`, ejecuta la revisión completa antes de entregar:
+
+```bash
+npm run check
+```
+
+Este comando ejecuta ESLint, las pruebas automatizadas de seguridad y `npm audit`. También pueden ejecutarse por separado:
+
+```bash
+npm run lint
+npm test
+npm audit --omit=dev
+```
 
 ## Solución de problemas
 

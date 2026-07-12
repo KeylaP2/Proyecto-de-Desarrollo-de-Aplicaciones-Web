@@ -3,13 +3,17 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const helmet = require("helmet");
+const path = require("path");
 const usuarioRoutes = require("./routes/usuario.routes");
 const authRoutes = require("./routes/auth.routes");
 const carritoRoutes = require("./routes/carrito.routes");
 const adminRoutes = require("./routes/admin.routes");
+const securityRoutes = require("./routes/security.routes");
+const SQLiteSessionStore = require("./models/sessionStore");
 const errorHandler = require("./middleware/errorHandler");
 const notFoundHandler = require("./middleware/notFoundHandler");
-const { corsOrigin, sessionSecret, isProduction } = require("./config/env");
+const { corsOrigin, sessionSecret, sessionDbFile, isProduction } = require("./config/env");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,11 +30,27 @@ app.use(cors({
   },
   credentials: true
 }));
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "http://localhost:3000", "http://127.0.0.1:3000"]
+    }
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
   name: "solotenis.sid",
   secret: sessionSecret,
+  store: new SQLiteSessionStore({
+    filename: path.resolve(__dirname, sessionDbFile),
+    ttlMs: 1000 * 60 * 60 * 2
+  }),
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -63,6 +83,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/security", securityRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/carrito", carritoRoutes);
 app.use("/api/admin", adminRoutes);
@@ -70,8 +91,10 @@ app.use("/api/admin", adminRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutandose en http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor ejecutandose en http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;
