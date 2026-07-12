@@ -4,7 +4,11 @@ const botonesAgregar = document.querySelectorAll('.add-btn');
 const filtrosMarca = document.querySelectorAll('.filter-group input[type="radio"]');
 const tarjetasProductos = document.querySelectorAll('.product-card');
 const CLAVE_CARRITO = 'carritoSoloTenis';
+const TALLAS_DISPONIBLES = ['38', '39', '40', '41', '42', '43', '44'];
+const GENEROS_DISPONIBLES = ['Hombre', 'Mujer', 'Unisex'];
+const STOCK_PREDETERMINADO = 12;
 let modalCarrito;
+let modalConfiguracion;
 
 let carrito = [];
 
@@ -26,7 +30,7 @@ function actualizarNumeroContador() {
 }
 
 function productoEstaEnCarrito(idProducto) {
-    return carrito.some(producto => producto.id === idProducto);
+    return carrito.some(producto => producto.productoBaseId === idProducto || producto.id === idProducto);
 }
 
 function actualizarEstadoBotones() {
@@ -53,30 +57,141 @@ function obtenerPrecioNumerico(textoPrecio) {
     return Number(textoPrecio.replace(/[^\d.]/g, '')) || 0;
 }
 
-function obtenerProductoDesdeTarjeta(tarjeta, indice) {
+function obtenerProductoDesdeTarjeta(tarjeta, indice, talla = '', genero = '') {
     const nombre = tarjeta.querySelector('h3')?.textContent.trim() || `Producto ${indice + 1}`;
     const precioTexto = tarjeta.querySelector('.price')?.textContent.trim() || '0';
     const marca = tarjeta.dataset.brand || '';
+    const productoBaseId = `${marca}-${nombre}`.toLowerCase().replace(/\s+/g, '-');
 
     return {
-        id: `${marca}-${nombre}`.toLowerCase().replace(/\s+/g, '-'),
+        id: talla && genero ? `${productoBaseId}-${genero}-${talla}`.toLowerCase().replace(/\s+/g, '-') : productoBaseId,
+        productoBaseId,
         nombre,
         marca,
         precio: obtenerPrecioNumerico(precioTexto),
+        talla,
+        genero,
+        stock: Number(tarjeta.dataset.stock) || STOCK_PREDETERMINADO,
         cantidad: 1
     };
 }
 
+function obtenerCantidadEnCarrito(productoBaseId) {
+    return carrito.reduce((total, producto) => {
+        const esMismoProducto = producto.productoBaseId === productoBaseId || producto.id === productoBaseId;
+        return total + (esMismoProducto ? producto.cantidad : 0);
+    }, 0);
+}
+
+function obtenerStockDisponible(producto) {
+    const stock = Number(producto.stock) || STOCK_PREDETERMINADO;
+    return Math.max(0, stock - obtenerCantidadEnCarrito(producto.productoBaseId));
+}
+
+function crearModalConfiguracion() {
+    const modal = document.createElement('section');
+    modal.className = 'cart-modal';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.innerHTML = `
+        <article class="cart-dialog" role="dialog" aria-modal="true" aria-labelledby="product-config-title">
+            <header class="cart-header">
+                <h2 id="product-config-title">Personaliza tu tenis</h2>
+                <button type="button" class="cart-close" aria-label="Cerrar selección">×</button>
+            </header>
+            <form class="product-config-form p-3">
+                <p class="product-config-name fw-bold mb-3"></p>
+                <label class="form-label" for="seleccion-genero">Género</label>
+                <select class="form-select mb-3" id="seleccion-genero" required></select>
+                <label class="form-label" for="seleccion-talla">Talla (US)</label>
+                <select class="form-select mb-3" id="seleccion-talla" required></select>
+                <p class="stock-disponible text-muted mb-3"></p>
+                <p class="config-error text-danger small" aria-live="polite"></p>
+                <button type="submit" class="btn btn-dark w-100">Añadir al carrito</button>
+            </form>
+        </article>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector('.cart-close').addEventListener('click', cerrarConfiguracion);
+    modal.addEventListener('click', evento => {
+        if (evento.target === modal) cerrarConfiguracion();
+    });
+    modal.querySelector('.product-config-form').addEventListener('submit', confirmarProductoConfigurado);
+    return modal;
+}
+
+function cerrarConfiguracion() {
+    if (!modalConfiguracion) return;
+    modalConfiguracion.classList.remove('is-open');
+    modalConfiguracion.setAttribute('aria-hidden', 'true');
+}
+
+function llenarOpciones(select, opciones, placeholder) {
+    select.textContent = '';
+    const opcionInicial = document.createElement('option');
+    opcionInicial.value = '';
+    opcionInicial.textContent = placeholder;
+    opcionInicial.disabled = true;
+    opcionInicial.selected = true;
+    select.appendChild(opcionInicial);
+
+    opciones.forEach(opcion => {
+        const elemento = document.createElement('option');
+        elemento.value = opcion;
+        elemento.textContent = opcion;
+        select.appendChild(elemento);
+    });
+}
+
+function abrirConfiguracionProducto(tarjeta) {
+    const indiceProducto = Array.from(tarjetasProductos).indexOf(tarjeta);
+    const producto = obtenerProductoDesdeTarjeta(tarjeta, indiceProducto);
+
+    if (!modalConfiguracion) modalConfiguracion = crearModalConfiguracion();
+
+    modalConfiguracion.dataset.productoBaseId = producto.productoBaseId;
+    modalConfiguracion.querySelector('.product-config-name').textContent = producto.nombre;
+    llenarOpciones(modalConfiguracion.querySelector('#seleccion-genero'), GENEROS_DISPONIBLES, 'Selecciona un género');
+    llenarOpciones(modalConfiguracion.querySelector('#seleccion-talla'), TALLAS_DISPONIBLES, 'Selecciona una talla');
+    modalConfiguracion.querySelector('.config-error').textContent = '';
+    modalConfiguracion.querySelector('.stock-disponible').textContent = `Stock disponible: ${obtenerStockDisponible(producto)} pares`;
+    modalConfiguracion.classList.add('is-open');
+    modalConfiguracion.setAttribute('aria-hidden', 'false');
+}
+
 function procesarAñadirCarrito(evento) {
-    const botonSeleccionado = evento.currentTarget;
-    const tarjeta = botonSeleccionado.closest('.product-card');
+    const tarjeta = evento.currentTarget.closest('.product-card');
 
     if (!tarjeta) {
         return;
     }
 
+    abrirConfiguracionProducto(tarjeta);
+}
+
+function confirmarProductoConfigurado(evento) {
+    evento.preventDefault();
+    const genero = modalConfiguracion.querySelector('#seleccion-genero').value;
+    const talla = modalConfiguracion.querySelector('#seleccion-talla').value;
+    const errorConfiguracion = modalConfiguracion.querySelector('.config-error');
+    const tarjeta = Array.from(tarjetasProductos).find(producto => {
+        const indice = Array.from(tarjetasProductos).indexOf(producto);
+        return obtenerProductoDesdeTarjeta(producto, indice).productoBaseId === modalConfiguracion.dataset.productoBaseId;
+    });
+
+    if (!genero || !talla || !tarjeta) {
+        errorConfiguracion.textContent = 'Selecciona el género y la talla para continuar.';
+        return;
+    }
+
     const indiceProducto = Array.from(tarjetasProductos).indexOf(tarjeta);
-    const producto = obtenerProductoDesdeTarjeta(tarjeta, indiceProducto);
+    const producto = obtenerProductoDesdeTarjeta(tarjeta, indiceProducto, talla, genero);
+
+    if (obtenerStockDisponible(producto) <= 0) {
+        errorConfiguracion.textContent = 'Este modelo ya no tiene stock disponible.';
+        return;
+    }
+
     const productoExistente = carrito.find(item => item.id === producto.id);
 
     if (productoExistente) {
@@ -88,6 +203,7 @@ function procesarAñadirCarrito(evento) {
     guardarCarrito();
     actualizarNumeroContador();
     actualizarEstadoBotones();
+    cerrarConfiguracion();
 }
 
 function obtenerMarcasSeleccionadas() {
@@ -159,6 +275,11 @@ function cambiarCantidadProducto(idProducto, cambio) {
         return;
     }
 
+    if (cambio > 0 && obtenerStockDisponible(producto) <= 0) {
+        window.alert('No hay más unidades disponibles de este modelo.');
+        return;
+    }
+
     producto.cantidad += cambio;
 
     if (producto.cantidad <= 0) {
@@ -217,6 +338,9 @@ function renderizarCarrito() {
         const marca = document.createElement('small');
         marca.textContent = producto.marca ? producto.marca.toUpperCase() : 'TENIS';
 
+        const variante = document.createElement('small');
+        variante.textContent = `Género: ${producto.genero || 'No especificado'} | Talla: ${producto.talla || 'No especificada'} | Stock restante: ${obtenerStockDisponible(producto)}`;
+
         const precioUnitario = document.createElement('span');
         precioUnitario.className = 'cart-unit-price';
         precioUnitario.textContent = formatearPrecio(producto.precio);
@@ -251,6 +375,7 @@ function renderizarCarrito() {
 
         informacion.appendChild(nombre);
         informacion.appendChild(marca);
+        informacion.appendChild(variante);
         informacion.appendChild(precioUnitario);
         controlesCantidad.appendChild(botonRestar);
         controlesCantidad.appendChild(cantidad);
