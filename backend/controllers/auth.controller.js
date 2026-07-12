@@ -86,8 +86,7 @@ const logout = (req, res, next) => {
 };
 
 const me = (req, res) => {
-  if (!req.session.usuario) return res.status(401).json({ message: "No hay una sesión activa." });
-  return res.json({ data: req.session.usuario });
+  return res.json({ data: req.session.usuario || null });
 };
 
 module.exports = { login, logout, me };

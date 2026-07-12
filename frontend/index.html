@@ -31,8 +31,13 @@
 
     <main class="container py-5">
         <aside class="filters-sidebar mb-4">
-            <h2 class="h5 mb-3">Filtros</h2>
-            <section class="filter-group">
+            <div class="filters-header">
+                <h2 class="h5 mb-0">Filtros</h2>
+                <button type="button" class="filters-toggle" aria-expanded="true" aria-controls="brand-filters">
+                    <span class="filters-toggle-text">Ocultar</span><span class="filters-toggle-icon" aria-hidden="true">−</span>
+                </button>
+            </div>
+            <section class="filter-group" id="brand-filters">
                 <h3 class="h6 text-uppercase text-muted">Marcas</h3>
                 <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
                     <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="" checked> Todas</label></li>

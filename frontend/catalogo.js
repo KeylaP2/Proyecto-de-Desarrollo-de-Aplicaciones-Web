@@ -3,6 +3,8 @@ const enlaceCarrito = document.querySelector('.cart-btn');
 const botonesAgregar = document.querySelectorAll('.add-btn');
 const filtrosMarca = document.querySelectorAll('.filter-group input[type="radio"]');
 const tarjetasProductos = document.querySelectorAll('.product-card');
+const panelFiltros = document.querySelector('.filters-sidebar');
+const botonFiltros = document.querySelector('.filters-toggle');
 const CLAVE_CARRITO = 'carritoSoloTenis';
 const API_CARRITO_URL = `http://${window.location.hostname}:3000/api/carrito`;
 const WHATSAPP_PEDIDOS = '18496556858';
@@ -27,6 +29,21 @@ let imagenesDetalle = [];
 let usuarioAutenticado = null;
 
 let carrito = [];
+
+function actualizarPanelFiltros(colapsado) {
+    if (!panelFiltros || !botonFiltros) return;
+    panelFiltros.classList.toggle('is-collapsed', colapsado);
+    botonFiltros.setAttribute('aria-expanded', String(!colapsado));
+    botonFiltros.querySelector('.filters-toggle-text').textContent = colapsado ? 'Mostrar' : 'Ocultar';
+    botonFiltros.querySelector('.filters-toggle-icon').textContent = colapsado ? '+' : '−';
+}
+
+if (botonFiltros) {
+    actualizarPanelFiltros(window.matchMedia('(max-width: 767.98px)').matches);
+    botonFiltros.addEventListener('click', () => {
+        actualizarPanelFiltros(!panelFiltros.classList.contains('is-collapsed'));
+    });
+}
 
 function actualizarNumeroContador() {
     const totalArticulos = carrito.reduce((acumulador, producto) => acumulador + producto.cantidad, 0);

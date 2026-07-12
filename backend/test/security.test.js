@@ -16,6 +16,11 @@ test("incluye encabezados de seguridad HTTP", async () => {
   assert.ok(response.headers["content-security-policy"]);
 });
 
+test("informa una sesión vacía sin rechazar al visitante público", async () => {
+  await request(app).get("/api/auth/me").expect(200, { data: null });
+  await request(app).get("/api/admin/me").expect(200, { data: null });
+});
+
 test("rechaza rutas administrativas sin sesión", async () => {
   await request(app).get("/api/admin/usuarios").expect(401);
 });

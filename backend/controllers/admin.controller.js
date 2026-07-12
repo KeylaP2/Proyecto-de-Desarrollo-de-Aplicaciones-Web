@@ -43,8 +43,7 @@ const logout = (req, res, next) => {
 };
 
 const me = (req, res) => {
-  if (!req.session?.admin) return res.status(401).json({ message: "No hay una sesión administrativa activa." });
-  return res.json({ data: req.session.admin });
+  return res.json({ data: req.session?.admin || null });
 };
 
 module.exports = { login, logout, me };
