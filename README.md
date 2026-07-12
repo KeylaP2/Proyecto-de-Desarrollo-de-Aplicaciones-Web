@@ -262,4 +262,4 @@ En ese caso, abre `http://127.0.0.1:5501`.
 - Darlyn Francisco — 100011821
 - Yarolin Esmailin Polanco Nuñez — 100047803
 - Jayson Enrique Peña Ferreras — 100042691
-- Adrián Pérez López — 100077425
+
