@@ -5,8 +5,7 @@ const camposObligatorios = [
   "apellido",
   "telefono",
   "fechaNacimiento",
-  "genero",
-  "password"
+  "genero"
 ];
 
 const faltanCamposObligatorios = (body) => {
@@ -41,7 +40,7 @@ const createUsuario = async (req, res, next) => {
     const { nombre, apellido, correo, telefono, fechaNacimiento, genero, password } = req.body;
     const email = req.body.email || correo;
 
-    if (faltanCamposObligatorios(req.body)) {
+    if (faltanCamposObligatorios(req.body) || !password) {
       return res.status(400).json({
         message: "Los campos nombre, apellido, email/correo, telefono, fechaNacimiento, genero y password son obligatorios"
       });
@@ -69,7 +68,7 @@ const updateUsuario = async (req, res, next) => {
 
     if (faltanCamposObligatorios(req.body)) {
       return res.status(400).json({
-        message: "Los campos nombre, apellido, email/correo, telefono, fechaNacimiento, genero y password son obligatorios"
+        message: "Los campos nombre, apellido, email/correo, telefono, fechaNacimiento y genero son obligatorios"
       });
     }
 
@@ -80,7 +79,7 @@ const updateUsuario = async (req, res, next) => {
       telefono,
       fechaNacimiento,
       genero,
-      password
+      password: password || undefined
     });
 
     if (result.changes === 0) {

@@ -56,14 +56,27 @@ const create = ({ nombre, apellido, email, telefono, fechaNacimiento, genero, pa
 };
 
 const update = (id, { nombre, apellido, email, telefono, fechaNacimiento, genero, password }) => {
-  const sql = `
-    UPDATE usuarios
-    SET nombre = ?, apellido = ?, email = ?, telefono = ?, fecha_nacimiento = ?, genero = ?, password = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `;
+  const campos = [
+    "nombre = ?",
+    "apellido = ?",
+    "email = ?",
+    "telefono = ?",
+    "fecha_nacimiento = ?",
+    "genero = ?"
+  ];
+  const valores = [nombre, apellido, email, telefono, fechaNacimiento, genero];
+
+  if (password) {
+    campos.push("password = ?");
+    valores.push(password);
+  }
+
+  campos.push("updated_at = CURRENT_TIMESTAMP");
+  const sql = `UPDATE usuarios SET ${campos.join(", ")} WHERE id = ?`;
+  valores.push(id);
 
   return new Promise((resolve, reject) => {
-    db.run(sql, [nombre, apellido, email, telefono, fechaNacimiento, genero, password, id], function handleUpdate(error) {
+    db.run(sql, valores, function handleUpdate(error) {
       if (error) reject(error);
       else resolve({ changes: this.changes });
     });

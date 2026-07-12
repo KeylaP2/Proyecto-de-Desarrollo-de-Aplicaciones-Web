@@ -11,6 +11,9 @@ const selectMonth = document.getElementById('month');
 const selectYear = document.getElementById('year');
 const radiosGender = document.getElementsByName('gender');
 const API_URL = 'http://localhost:3000/api/usuarios';
+const botonEnviar = formulario.querySelector('button[type="submit"]');
+const botonCancelarEdicion = document.getElementById('cancelar-edicion');
+let idUsuarioEnEdicion = null;
 
 async function obtenerUsuariosRegistrados() {
     try {
@@ -226,11 +229,17 @@ for (const radio of radiosGender) {
 formulario.addEventListener('submit', async function (event) {
     event.preventDefault();
 
+    const esEdicion = idUsuarioEnEdicion !== null;
+    const seEstaCambiandoPassword = inputPassword.value.trim() !== '' || inputConfirmPassword.value.trim() !== '';
     const esNombreValido = validarCampoVacio(inputNombre, document.getElementById('error-firstname'), 'El nombre es obligatorio.');
     const esApellidoValido = validarCampoVacio(inputApellido, document.getElementById('error-lastname'), 'El apellido es obligatorio.');
     const esEmailValido = validarEmail(inputEmail, document.getElementById('error-email'));
-    const esPasswordValido = validarPassword(inputPassword, document.getElementById('error-password'));
-    const esConfirmPasswordValido = validarConfirmarPassword(inputConfirmPassword, inputPassword, document.getElementById('error-confirm-password'));
+    const esPasswordValido = !esEdicion || seEstaCambiandoPassword
+        ? validarPassword(inputPassword, document.getElementById('error-password'))
+        : true;
+    const esConfirmPasswordValido = !esEdicion || seEstaCambiandoPassword
+        ? validarConfirmarPassword(inputConfirmPassword, inputPassword, document.getElementById('error-confirm-password'))
+        : true;
     const esTelefonoValido = validarTelefono(inputPhone, document.getElementById('error-phone'));
     const esFechaValida = validarFecha(document.getElementById('error-fecha'));
     const esGeneroValido = validarGenero(document.getElementById('error-gender'));
@@ -249,24 +258,24 @@ formulario.addEventListener('submit', async function (event) {
         }
 
         const fechaNacimiento = `${selectYear.value}-${selectMonth.value}-${selectDay.value}`;
-        const nuevoUsuario = {
+        const datosUsuario = {
             nombre: inputNombre.value.trim(),
             apellido: inputApellido.value.trim(),
             correo: inputEmail.value.trim(),
             email: inputEmail.value.trim(),
-            password: inputPassword.value.trim(),
+            ...(seEstaCambiandoPassword && { password: inputPassword.value.trim() }),
             telefono: inputPhone.value.trim(),
             fechaNacimiento,
             genero: generoSeleccionado
         };
 
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
+            const response = await fetch(esEdicion ? `${API_URL}/${idUsuarioEnEdicion}` : API_URL, {
+                method: esEdicion ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(nuevoUsuario)
+                body: JSON.stringify(datosUsuario)
             });
 
             if (!response.ok) {
@@ -275,21 +284,17 @@ formulario.addEventListener('submit', async function (event) {
             }
 
             const resultado = await response.json();
-            const usuarioCreado = resultado.data || resultado;
+            const usuarioGuardado = resultado.data || resultado;
             const mensajeExito = document.createElement('p');
             mensajeExito.className = 'msg-exito';
             mensajeExito.style.color = 'green';
-            mensajeExito.textContent = `¡Registro completado con éxito, ${usuarioCreado.nombre}!`;
+            mensajeExito.textContent = esEdicion
+                ? `¡Los datos de ${usuarioGuardado.nombre} fueron actualizados correctamente!`
+                : `¡Registro completado con éxito, ${usuarioGuardado.nombre}!`;
             contenedorExito.appendChild(mensajeExito);
 
             renderUsuarios();
-            formulario.reset();
-
-            const inputs = [inputNombre, inputApellido, inputEmail, inputPassword, inputConfirmPassword, inputPhone, selectDay, selectMonth, selectYear];
-            inputs.forEach(input => {
-                input.classList.remove('input-success');
-                input.classList.remove('input-error');
-            });
+            cancelarEdicion();
         } catch (error) {
             const mensajeError = document.createElement('p');
             mensajeError.className = 'msg-error';
@@ -299,6 +304,74 @@ formulario.addEventListener('submit', async function (event) {
         }
     }
 });
+
+function limpiarEstadoFormulario() {
+    formulario.reset();
+    const inputs = [inputNombre, inputApellido, inputEmail, inputPassword, inputConfirmPassword, inputPhone, selectDay, selectMonth, selectYear];
+    inputs.forEach(input => {
+        input.classList.remove('input-success', 'input-error');
+    });
+
+    document.querySelectorAll('.error-msg').forEach(elemento => {
+        elemento.textContent = '';
+    });
+}
+
+function cancelarEdicion() {
+    idUsuarioEnEdicion = null;
+    limpiarEstadoFormulario();
+    botonEnviar.textContent = 'Sign Up';
+    botonCancelarEdicion.classList.add('d-none');
+}
+
+function cargarUsuarioEnFormulario(usuario) {
+    idUsuarioEnEdicion = usuario.id;
+    inputNombre.value = usuario.nombre || '';
+    inputApellido.value = usuario.apellido || '';
+    inputEmail.value = usuario.email || usuario.correo || '';
+    inputPhone.value = usuario.telefono || '';
+
+    const fechaNacimiento = usuario.fechaNacimiento || usuario.fecha_nacimiento || '';
+    const [year, month, day] = fechaNacimiento.split('-');
+    selectYear.value = year || '';
+    selectMonth.value = month || '';
+    selectDay.value = day || '';
+
+    for (const radio of radiosGender) {
+        radio.checked = radio.value === usuario.genero;
+    }
+
+    inputPassword.value = '';
+    inputConfirmPassword.value = '';
+    botonEnviar.textContent = 'Actualizar usuario';
+    botonCancelarEdicion.classList.remove('d-none');
+    document.getElementById('form-mensaje').textContent = 'Edita los datos necesarios. Deja la contraseña vacía si deseas conservar la actual.';
+    formulario.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function eliminarUsuario(usuario) {
+    const confirmar = window.confirm(`¿Deseas eliminar a ${usuario.nombre} ${usuario.apellido}?`);
+
+    if (!confirmar) return;
+
+    try {
+        const response = await fetch(`${API_URL}/${usuario.id}`, { method: 'DELETE' });
+
+        if (!response.ok) {
+            const errorRespuesta = await response.json().catch(() => ({}));
+            throw new Error(errorRespuesta.message || 'No se pudo eliminar el usuario.');
+        }
+
+        if (idUsuarioEnEdicion === usuario.id) cancelarEdicion();
+        await renderUsuarios();
+    } catch (error) {
+        const contenedorMensaje = document.getElementById('form-mensaje');
+        contenedorMensaje.textContent = error.message;
+        contenedorMensaje.className = 'my-3 text-center fw-bold msg-error';
+    }
+}
+
+botonCancelarEdicion.addEventListener('click', cancelarEdicion);
 
 // Renderizar la lista de usuarios
 const usuariosSection = document.getElementById('usuarios-registrados-section');
@@ -344,6 +417,25 @@ async function renderUsuarios() {
             li.appendChild(contacto);
             li.appendChild(crearSaltoLinea());
             li.appendChild(datosPersonales);
+
+            const acciones = document.createElement('div');
+            acciones.className = 'd-flex gap-2 mt-2';
+
+            const botonEditar = document.createElement('button');
+            botonEditar.type = 'button';
+            botonEditar.className = 'btn btn-sm btn-outline-primary';
+            botonEditar.textContent = 'Editar';
+            botonEditar.addEventListener('click', () => cargarUsuarioEnFormulario(usuario));
+
+            const botonEliminar = document.createElement('button');
+            botonEliminar.type = 'button';
+            botonEliminar.className = 'btn btn-sm btn-outline-danger';
+            botonEliminar.textContent = 'Eliminar';
+            botonEliminar.addEventListener('click', () => eliminarUsuario(usuario));
+
+            acciones.appendChild(botonEditar);
+            acciones.appendChild(botonEliminar);
+            li.appendChild(acciones);
             listaUsuarios.appendChild(li);
         });
     } else {
