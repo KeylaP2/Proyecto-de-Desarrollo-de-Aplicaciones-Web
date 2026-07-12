@@ -5,123 +5,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoloTenisRD | Sneaker Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+    <header class="main-header text-center">
+        <div class="container py-5">
+            <h1 class="main-title display-3 fw-black text-uppercase mb-2">SoloTenis<span>RD</span></h1>
+            <p class="main-slogan mb-4">La mejor tienda de tenis en RD</p>
 
-    <header class="main-header">
-        <h1 class="main-title">SoloTenis<span>RD</span></h1>
-        <p class="main-slogan">La mejor tienda de tenis en RD</p>
-        <nav class="main-nav">
-
-
-
-            <ul>
-                <li><a href="index.html" class="active">Inicio</a></li>
-                <li><a href="catalogo.html">Catálogo </a></li>
-                <li><a href="registro.html">Registro</a></li>
-                <li><a href="#" class="cart-btn">Carrito (<span id="contador-carrito">0</span>)</a></li>
-
-            </ul>
-        </nav>
+            <nav class="navbar navbar-expand-md navbar-dark justify-content-center">
+                <ul class="navbar-nav gap-2">
+                    <li class="nav-item"><a href="index.html" class="nav-link active">Inicio</a></li>
+                    <li class="nav-item"><a href="catalogo.html" class="nav-link">Catálogo</a></li>
+                    <li class="nav-item"><a href="registro.html" class="nav-link">Registro</a></li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link cart-btn">Carrito (<span id="contador-carrito">0</span>)</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <main class="store-layout">
-
-        <aside class="filters-sidebar">
-            <h2>Filtros</h2>
+    <main class="container py-5">
+        <aside class="filters-sidebar mb-4">
+            <h2 class="h5 mb-3">Filtros</h2>
             <section class="filter-group">
-                <h3>Marcas</h3>
-                <ul>
-                    <li><label><input type="checkbox" value="nike"> Nike</label></li>
-                    <li><label><input type="checkbox" value="jordan"> Jordan</label></li>
-                    <li><label><input type="checkbox" value="adidas"> Adidas</label></li>
-                    <li><label><input type="checkbox" value="reebok"> Reebok</label></li>
-                    <li><label><input type="checkbox" value="new balance"> New Balance</label></li>
-                    <li><label><input type="checkbox" value="alexander mcqueen"> Alexander McQueen</label></li>
-                    <li><label><input type="checkbox" value="converse"> Converse</label></li>
-                    <li><label><input type="checkbox" value="asics"> Asics</label></li>
+                <h3 class="h6 text-uppercase text-muted">Marcas</h3>
+                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="" checked> Todas</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="nike"> Nike</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="jordan"> Jordan</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="adidas"> Adidas</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="reebok"> Reebok</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="new balance"> New Balance</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="alexander mcqueen"> Alexander McQueen</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="converse"> Converse</label></li>
+                    <li><label class="form-check brand-filter"><input class="form-check-input" type="radio" name="brand-filter" value="asics"> Asics</label></li>
                 </ul>
             </section>
         </aside>
 
         <section class="products-section">
-            <h2>Tenis Exclusivos</h2>
+            <h2 class="section-title text-center mb-4">Tenis Exclusivos</h2>
 
-            <section class="products-grid">
-
-                <article class="product-card" data-brand="new balance">
-                    <figure>
-                        <img src="https://images.unsplash.com/photo-1689830570678-956587526e75?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG5ldyUyMGJhbGFuY2V8ZW58MHx8MHx8fDA%3D"
-                            alt="New Balance 550" class="product-img">
-                    </figure>
-                    <section class="product-info">
-                        <h3>New Balance 550</h3>
-                        <p class="category">Limited Edition</p>
-                        <p class="price-action">
-                            <span class="price">$11,000</span>
-                            <button type="button" class="add-btn">Añadir</button>
-                        </p>
-                    </section>
+            <section class="row g-4 products-grid">
+                <article class="col-12 col-md-6 col-lg-3 product-card-wrapper">
+                    <div class="card product-card h-100" data-brand="new balance">
+                        <img src="https://images.unsplash.com/photo-1689830570678-956587526e75?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG5ldyUyMGJhbGFuY2V8ZW58MHx8MHx8fDA%3D" alt="New Balance 550" class="card-img-top product-img">
+                        <section class="card-body product-info d-flex flex-column">
+                            <h3 class="h5 card-title">New Balance 550</h3>
+                            <p class="category text-muted">Limited Edition</p>
+                            <p class="price-action mt-auto mb-0">
+                                <span class="price d-block">$11,000</span>
+                                <button type="button" class="btn btn-dark w-100 add-btn">Añadir</button>
+                            </p>
+                        </section>
+                    </div>
                 </article>
 
-                <article class="product-card" data-brand="adidas">
-                    <figure>
-                        <img src="https://images.unsplash.com/photo-1593005210597-5dcf41ed203d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D"
-                            alt="Adidas Yeezy Boost 350" class="product-img">
-                    </figure>
-                    <section class="product-info">
-                        <h3>Adidas Yeezy Boost 350</h3>
-                        <p class="category">New Edition</p>
-                        <p class="price-action">
-                            <span class="price">$9,500</span>
-                            <button type="button" class="add-btn">Añadir</button>
-                        </p>
-                    </section>
+                <article class="col-12 col-md-6 col-lg-3 product-card-wrapper">
+                    <div class="card product-card h-100" data-brand="adidas">
+                        <img src="https://images.unsplash.com/photo-1593005210597-5dcf41ed203d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D" alt="Adidas Yeezy Boost 350" class="card-img-top product-img">
+                        <section class="card-body product-info d-flex flex-column">
+                            <h3 class="h5 card-title">Adidas Yeezy Boost 350</h3>
+                            <p class="category text-muted">New Edition</p>
+                            <p class="price-action mt-auto mb-0">
+                                <span class="price d-block">$9,500</span>
+                                <button type="button" class="btn btn-dark w-100 add-btn">Añadir</button>
+                            </p>
+                        </section>
+                    </div>
                 </article>
 
-
-                <article class="product-card" data-brand="nike">
-                    <figure>
-                        <img src="https://images.unsplash.com/photo-1695697104675-429f5fcdede6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8am9yZGFuJTIwMXxlbnwwfHwwfHx8MA%3D%3D"
-                            alt="Jordan 1" class="product-img">
-                    </figure>
-                    <section class="product-info">
-                        <h3>Nike x Travis Scott</h3>
-                        <p class="category">Limited Edition</p>
-                        <p class="price-action">
-                            <span class="price">$10,000</span>
-                            <button type="button" class="add-btn">Añadir</button>
-                        </p>
-                    </section>
+                <article class="col-12 col-md-6 col-lg-3 product-card-wrapper">
+                    <div class="card product-card h-100" data-brand="nike">
+                        <img src="https://images.unsplash.com/photo-1695697104675-429f5fcdede6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8am9yZGFuJTIwMXxlbnwwfHwwfHx8MA%3D%3D" alt="Jordan 1" class="card-img-top product-img">
+                        <section class="card-body product-info d-flex flex-column">
+                            <h3 class="h5 card-title">Nike x Travis Scott</h3>
+                            <p class="category text-muted">Limited Edition</p>
+                            <p class="price-action mt-auto mb-0">
+                                <span class="price d-block">$10,000</span>
+                                <button type="button" class="btn btn-dark w-100 add-btn">Añadir</button>
+                            </p>
+                        </section>
+                    </div>
                 </article>
 
-                <article class="product-card" data-brand="adidas">
-                    <figure>
-                        <img src="https://images.unsplash.com/photo-1710504989595-604f59d1b140?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFkaWRhcyUyMHNuZWFrZXJzfGVufDB8fDB8fHww"
-                            alt="Adidas Samba" class="product-img">
-                    </figure>
-                    <section class="product-info">
-                        <h3>Adidas Samba</h3>
-                        <p class="category">New Arrival</p>
-                        <p class="price-action">
-                            <span class="price">$8,000</span>
-                            <button type="button" class="add-btn">Añadir</button>
-                        </p>
-                    </section>
+                <article class="col-12 col-md-6 col-lg-3 product-card-wrapper">
+                    <div class="card product-card h-100" data-brand="adidas">
+                        <img src="https://images.unsplash.com/photo-1710504989595-604f59d1b140?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFkaWRhcyUyMHNuZWFrZXJzfGVufDB8fDB8fHww" alt="Adidas Samba" class="card-img-top product-img">
+                        <section class="card-body product-info d-flex flex-column">
+                            <h3 class="h5 card-title">Adidas Samba</h3>
+                            <p class="category text-muted">New Arrival</p>
+                            <p class="price-action mt-auto mb-0">
+                                <span class="price d-block">$8,000</span>
+                                <button type="button" class="btn btn-dark w-100 add-btn">Añadir</button>
+                            </p>
+                        </section>
+                    </div>
                 </article>
-
             </section>
         </section>
-
     </main>
 
-    <footer class="main-footer">
-        <p>&copy; 2026 SoloTenisRD - La mejor tienda de tenis en RD.</p>
-        <p>Proyecto: Desarrollo de Aplicaciones Web - UAPA</p>
+    <footer class="main-footer text-center py-4">
+        <p class="mb-1">&copy; 2026 SoloTenisRD - La mejor tienda de tenis en RD.</p>
+        <p class="mb-0">Proyecto: Desarrollo de Aplicaciones Web - UAPA</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="catalogo.js"></script>
 </body>
 

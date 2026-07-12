@@ -1,7 +1,7 @@
 const contadorCarrito = document.getElementById('contador-carrito');
 const enlaceCarrito = document.querySelector('.cart-btn');
 const botonesAgregar = document.querySelectorAll('.add-btn');
-const filtrosMarca = document.querySelectorAll('.filter-group input[type="checkbox"]');
+const filtrosMarca = document.querySelectorAll('.filter-group input[type="radio"]');
 const tarjetasProductos = document.querySelectorAll('.product-card');
 const CLAVE_CARRITO = 'carritoSoloTenis';
 let modalCarrito;
@@ -91,9 +91,8 @@ function procesarAñadirCarrito(evento) {
 }
 
 function obtenerMarcasSeleccionadas() {
-    return Array.from(filtrosMarca)
-        .filter(filtro => filtro.checked)
-        .map(filtro => filtro.value);
+    const filtroSeleccionado = Array.from(filtrosMarca).find(filtro => filtro.checked);
+    return filtroSeleccionado?.value ? [filtroSeleccionado.value] : [];
 }
 
 function aplicarFiltros() {
@@ -102,7 +101,8 @@ function aplicarFiltros() {
     tarjetasProductos.forEach(tarjeta => {
         const marcaProducto = tarjeta.dataset.brand || '';
         const debeMostrarse = marcasSeleccionadas.length === 0 || marcasSeleccionadas.includes(marcaProducto);
-        tarjeta.style.display = debeMostrarse ? '' : 'none';
+        const columnaProducto = tarjeta.closest('.product-card-wrapper') || tarjeta;
+        columnaProducto.style.display = debeMostrarse ? '' : 'none';
     });
 }
 
