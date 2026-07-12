@@ -4,6 +4,19 @@ SoloTenisRD es una aplicación web para la venta y promoción de tenis deportivo
 
 Este proyecto fue desarrollado como parte de la asignatura Desarrollo de Aplicaciones Web.
 
+
+Lo primero que debes hacer : 
+
+### 4. Inicializar la base de datos
+
+Ejecuta este comando dentro de `backend`:
+
+```bash
+npm run init-db
+```
+
+Este comando crea o prepara la base de datos SQLite en `backend/database/mibase.db`.
+
 ## Estructura del proyecto
 
 ```text
