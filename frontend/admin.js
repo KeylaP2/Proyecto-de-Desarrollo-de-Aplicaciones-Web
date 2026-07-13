@@ -23,10 +23,11 @@ function crearCelda(texto, etiqueta) {
 
 function renderizarUsuarios() {
     const termino = buscador.value.trim().toLowerCase();
-    const visibles = usuariosAdmin.filter(usuario => [usuario.nombre, usuario.apellido, usuario.email, usuario.telefono]
+    const usuariosValidos = usuariosAdmin.filter(Boolean);
+    const visibles = usuariosValidos.filter(usuario => [usuario.nombre, usuario.apellido, usuario.email || usuario.correo, usuario.telefono]
         .some(valor => String(valor || '').toLowerCase().includes(termino)));
     cuerpoTabla.textContent = '';
-    document.getElementById('total-users').textContent = usuariosAdmin.length;
+    document.getElementById('total-users').textContent = usuariosValidos.length;
     document.getElementById('visible-users').textContent = visibles.length;
     document.getElementById('admin-empty').hidden = visibles.length !== 0;
 
@@ -181,7 +182,11 @@ document.addEventListener('keydown', evento => { if (evento.key === 'Escape' && 
 (async () => {
     try {
         const sesion = await solicitudAdmin('/me');
-        document.getElementById('admin-session-email').textContent = sesion.data.email;
+        if (!sesion.data) {
+            window.location.replace('admin-login.html');
+            return;
+        }
+        document.getElementById('admin-session-email').textContent = sesion.data.email || '';
         await cargarUsuarios();
     } catch (error) {
         mensajePanel.textContent = error.message;

@@ -5,7 +5,10 @@ const passwordAdmin = document.getElementById('admin-password');
 
 async function comprobarSesionAdmin() {
     const response = await fetch(`${ADMIN_API_URL}/me`, { credentials: 'include' }).catch(() => null);
-    if (response?.ok) window.location.replace('admin.html');
+    if (!response?.ok) return;
+
+    const resultado = await response.json().catch(() => ({}));
+    if (resultado.data) window.location.replace('admin.html');
 }
 
 document.getElementById('toggle-admin-password').addEventListener('click', evento => {

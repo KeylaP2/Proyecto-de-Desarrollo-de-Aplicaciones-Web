@@ -50,12 +50,28 @@
                             </div>
 
                             <div class="mb-3">
-                                <input class="form-control" type="password" id="password" name="password" placeholder="Contraseña">
+                                <div class="password-field">
+                                    <input class="form-control" type="password" id="password" name="password" placeholder="Contraseña">
+                                    <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
                                 <span class="error-msg" id="error-password"></span>
                             </div>
 
                             <div class="mb-3">
-                                <input class="form-control" type="password" id="confirm-password" name="confirm-password" placeholder="Confirmar contraseña">
+                                <div class="password-field">
+                                    <input class="form-control" type="password" id="confirm-password" name="confirm-password" placeholder="Confirmar contraseña">
+                                    <button type="button" class="password-toggle" data-password-toggle="confirm-password" aria-label="Mostrar confirmación de contraseña">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
                                 <span class="error-msg" id="error-confirm-password"></span>
                             </div>
 
@@ -65,26 +81,7 @@
                             </div>
 
                             <label class="form-label field-label">Fecha de nacimiento</label>
-                            <section class="row g-2 mb-1">
-                                <div class="col-4">
-                                    <select class="form-select" name="day" id="day">
-                                        <option value="">Día</option>
-                                        <option value="01">01</option>
-                                    </select>
-                                </div>
-                                <div class="col-4">
-                                    <select class="form-select" name="month" id="month">
-                                        <option value="">Mes</option>
-                                        <option value="01">01</option>
-                                    </select>
-                                </div>
-                                <div class="col-4">
-                                    <select class="form-select" name="year" id="year">
-                                        <option value="">Año</option>
-                                        <option value="2026">2026</option>
-                                    </select>
-                                </div>
-                            </section>
+                            <input class="form-control mb-1" type="date" id="birthdate" name="birthdate" aria-describedby="error-fecha">
                             <span class="error-msg" id="error-fecha"></span>
 
                             <label class="form-label field-label mt-3">Género</label>

@@ -6,10 +6,9 @@ const inputEmail = document.getElementById('email');
 const inputPassword = document.getElementById('password');
 const inputConfirmPassword = document.getElementById('confirm-password');
 const inputPhone = document.getElementById('phone');
-const selectDay = document.getElementById('day');
-const selectMonth = document.getElementById('month');
-const selectYear = document.getElementById('year');
+const inputFechaNacimiento = document.getElementById('birthdate');
 const radiosGender = document.getElementsByName('gender');
+const botonesPassword = document.querySelectorAll('[data-password-toggle]');
 const API_URL = `http://${window.location.hostname}:3000/api/usuarios`;
 
 function mostrarError(elementoError, mensaje) {
@@ -30,27 +29,76 @@ function marcarCampoInvalido(input) {
     input.classList.remove('input-success');
 }
 
-function poblarSelect(select, inicio, fin, pad = false) {
-    const placeholder = select.options[0];
-    select.textContent = '';
-    select.appendChild(placeholder);
-
-    for (let valor = inicio; valor <= fin; valor++) {
-        const option = document.createElement('option');
-        option.value = pad ? String(valor).padStart(2, '0') : String(valor);
-        option.textContent = option.value;
-        select.appendChild(option);
-    }
+function formatearFechaISO(fecha) {
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
-function poblarFechaNacimiento() {
+function configurarFechaNacimiento() {
     const yearActual = new Date().getFullYear();
-    poblarSelect(selectDay, 1, 31, true);
-    poblarSelect(selectMonth, 1, 12, true);
-    poblarSelect(selectYear, yearActual - 100, yearActual);
+    const fechaMinima = new Date(yearActual - 100, 0, 1);
+
+    inputFechaNacimiento.max = formatearFechaISO(new Date());
+    inputFechaNacimiento.min = formatearFechaISO(fechaMinima);
 }
 
-poblarFechaNacimiento();
+configurarFechaNacimiento();
+
+function ocultarPasswords() {
+    botonesPassword.forEach(boton => {
+        const input = document.getElementById(boton.dataset.passwordToggle);
+        if (!input) return;
+
+        input.type = 'password';
+        boton.setAttribute('aria-label', boton.dataset.passwordToggle === 'password' ? 'Mostrar contraseña' : 'Mostrar confirmación de contraseña');
+        boton.setAttribute('aria-pressed', 'false');
+        boton.disabled = false;
+        boton.dataset.revelado = 'false';
+        boton.classList.remove('is-visible');
+    });
+}
+
+botonesPassword.forEach(boton => {
+    const input = document.getElementById(boton.dataset.passwordToggle);
+
+    boton.setAttribute('aria-pressed', 'false');
+    boton.dataset.revelado = 'false';
+    boton.classList.toggle('is-visible', Boolean(input?.value));
+
+    input?.addEventListener('input', () => {
+        const tieneValor = input.value.length > 0;
+        boton.classList.toggle('is-visible', tieneValor && boton.dataset.revelado !== 'true');
+
+        if (!tieneValor) {
+            input.type = 'password';
+            boton.disabled = false;
+            boton.dataset.revelado = 'false';
+            boton.setAttribute('aria-label', boton.dataset.passwordToggle === 'password' ? 'Mostrar contraseña' : 'Mostrar confirmación de contraseña');
+            boton.setAttribute('aria-pressed', 'false');
+        }
+    });
+
+    input?.addEventListener('blur', () => {
+        if (input.type === 'text') {
+            input.type = 'password';
+            boton.setAttribute('aria-pressed', 'false');
+        }
+    });
+
+    boton.addEventListener('click', () => {
+        if (!input) return;
+
+        input.type = 'text';
+        boton.dataset.revelado = 'true';
+        boton.classList.remove('is-visible');
+        boton.setAttribute('aria-label', 'Contraseña revelada');
+        boton.setAttribute('aria-pressed', 'true');
+
+        input.focus();
+    });
+});
 
 // 2. Funciones de validación individuales
 function validarCampoVacio(input, elementoError, mensaje) {
@@ -127,39 +175,31 @@ function validarTelefono(input, elementoError) {
     return true;
 }
 
-function validarFecha(elementoError) {
-    if (selectDay.value === '' || selectMonth.value === '' || selectYear.value === '') {
-        mostrarError(elementoError, 'La fecha de nacimiento está incompleta.');
-        marcarCampoInvalido(selectDay);
-        marcarCampoInvalido(selectMonth);
-        marcarCampoInvalido(selectYear);
+function validarFecha(input, elementoError) {
+    if (input.value === '') {
+        mostrarError(elementoError, 'La fecha de nacimiento es obligatoria.');
+        marcarCampoInvalido(input);
         return false;
     }
 
-    const day = Number(selectDay.value);
-    const month = Number(selectMonth.value);
-    const year = Number(selectYear.value);
-    const fecha = new Date(year, month - 1, day);
-    const fechaEsReal = fecha.getFullYear() === year && fecha.getMonth() === month - 1 && fecha.getDate() === day;
+    const fecha = new Date(`${input.value}T00:00:00`);
 
-    if (!fechaEsReal) {
+    if (Number.isNaN(fecha.getTime())) {
         mostrarError(elementoError, 'La fecha de nacimiento no es válida.');
-        marcarCampoInvalido(selectDay);
-        marcarCampoInvalido(selectMonth);
-        marcarCampoInvalido(selectYear);
+        marcarCampoInvalido(input);
         return false;
-    } else if (fecha > new Date()) {
+    } else if (input.max && input.value > input.max) {
         mostrarError(elementoError, 'La fecha de nacimiento no puede ser futura.');
-        marcarCampoInvalido(selectDay);
-        marcarCampoInvalido(selectMonth);
-        marcarCampoInvalido(selectYear);
+        marcarCampoInvalido(input);
+        return false;
+    } else if (input.min && input.value < input.min) {
+        mostrarError(elementoError, 'Selecciona una fecha de nacimiento válida.');
+        marcarCampoInvalido(input);
         return false;
     }
 
     limpiarError(elementoError);
-    marcarCampoValido(selectDay);
-    marcarCampoValido(selectMonth);
-    marcarCampoValido(selectYear);
+    marcarCampoValido(input);
     return true;
 }
 
@@ -198,9 +238,8 @@ inputPhone.addEventListener('input', () => {
     validarTelefono(inputPhone, document.getElementById('error-phone'));
 });
 
-selectDay.addEventListener('change', () => validarFecha(document.getElementById('error-fecha')));
-selectMonth.addEventListener('change', () => validarFecha(document.getElementById('error-fecha')));
-selectYear.addEventListener('change', () => validarFecha(document.getElementById('error-fecha')));
+inputFechaNacimiento.addEventListener('change', () => validarFecha(inputFechaNacimiento, document.getElementById('error-fecha')));
+inputFechaNacimiento.addEventListener('input', () => validarFecha(inputFechaNacimiento, document.getElementById('error-fecha')));
 
 for (const radio of radiosGender) {
     radio.addEventListener('change', () => validarGenero(document.getElementById('error-gender')));
@@ -216,7 +255,7 @@ formulario.addEventListener('submit', async function (event) {
     const esPasswordValido = validarPassword(inputPassword, document.getElementById('error-password'));
     const esConfirmPasswordValido = validarConfirmarPassword(inputConfirmPassword, inputPassword, document.getElementById('error-confirm-password'));
     const esTelefonoValido = validarTelefono(inputPhone, document.getElementById('error-phone'));
-    const esFechaValida = validarFecha(document.getElementById('error-fecha'));
+    const esFechaValida = validarFecha(inputFechaNacimiento, document.getElementById('error-fecha'));
     const esGeneroValido = validarGenero(document.getElementById('error-gender'));
     const contenedorExito = document.getElementById('form-mensaje');
 
@@ -232,7 +271,7 @@ formulario.addEventListener('submit', async function (event) {
             }
         }
 
-        const fechaNacimiento = `${selectYear.value}-${selectMonth.value}-${selectDay.value}`;
+        const fechaNacimiento = inputFechaNacimiento.value;
         const datosUsuario = {
             nombre: inputNombre.value.trim(),
             apellido: inputApellido.value.trim(),
@@ -278,7 +317,8 @@ formulario.addEventListener('submit', async function (event) {
 
 function limpiarEstadoFormulario() {
     formulario.reset();
-    const inputs = [inputNombre, inputApellido, inputEmail, inputPassword, inputConfirmPassword, inputPhone, selectDay, selectMonth, selectYear];
+    ocultarPasswords();
+    const inputs = [inputNombre, inputApellido, inputEmail, inputPassword, inputConfirmPassword, inputPhone, inputFechaNacimiento];
     inputs.forEach(input => {
         input.classList.remove('input-success', 'input-error');
     });

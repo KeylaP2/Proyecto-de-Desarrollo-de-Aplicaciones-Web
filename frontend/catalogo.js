@@ -6,6 +6,7 @@ const tarjetasProductos = document.querySelectorAll('.product-card');
 const panelFiltros = document.querySelector('.filters-sidebar');
 const botonFiltros = document.querySelector('.filters-toggle');
 const CLAVE_CARRITO = 'carritoSoloTenis';
+const CLAVE_POSICION_CARRITO = 'posicionCarritoFlotante';
 const API_CARRITO_URL = `http://${window.location.hostname}:3000/api/carrito`;
 const WHATSAPP_PEDIDOS = '18496556858';
 const TALLAS_DISPONIBLES = ['38', '39', '40', '41', '42', '43', '44'];
@@ -27,6 +28,8 @@ let modalDetalles;
 let indiceImagenDetalle = 0;
 let imagenesDetalle = [];
 let usuarioAutenticado = null;
+let botonCarritoFlotante;
+let arrastreCarritoFlotante = null;
 
 let carrito = [];
 
@@ -52,6 +55,132 @@ function actualizarNumeroContador() {
         contadorCarrito.textContent = totalArticulos;
     } else if (enlaceCarrito) {
         enlaceCarrito.textContent = `Carrito (${totalArticulos})`;
+    }
+
+    actualizarCarritoFlotante(totalArticulos);
+}
+
+function abrirCarritoDesdeAcceso(evento) {
+    evento.preventDefault();
+    if (botonCarritoFlotante?.dataset.dragging === 'true') return;
+    if (!usuarioAutenticado) {
+        window.alert('Inicia sesión para ver tu carrito.');
+        window.location.href = 'login.html';
+        return;
+    }
+    abrirCarrito();
+}
+
+function limitarPosicionCarrito(x, y) {
+    if (!botonCarritoFlotante) return { x, y };
+
+    const margen = 12;
+    const ancho = botonCarritoFlotante.offsetWidth;
+    const alto = botonCarritoFlotante.offsetHeight;
+    return {
+        x: Math.min(Math.max(margen, x), window.innerWidth - ancho - margen),
+        y: Math.min(Math.max(margen, y), window.innerHeight - alto - margen)
+    };
+}
+
+function posicionarCarritoFlotante(x, y, persistir = false) {
+    if (!botonCarritoFlotante) return;
+
+    const posicion = limitarPosicionCarrito(x, y);
+    botonCarritoFlotante.style.left = `${posicion.x}px`;
+    botonCarritoFlotante.style.top = `${posicion.y}px`;
+    botonCarritoFlotante.style.right = 'auto';
+    botonCarritoFlotante.style.bottom = 'auto';
+
+    if (persistir) {
+        localStorage.setItem(CLAVE_POSICION_CARRITO, JSON.stringify(posicion));
+    }
+}
+
+function restaurarPosicionCarritoFlotante() {
+    if (!botonCarritoFlotante) return;
+
+    const posicionGuardada = JSON.parse(localStorage.getItem(CLAVE_POSICION_CARRITO) || 'null');
+    const posicionInicial = posicionGuardada || {
+        x: window.innerWidth - botonCarritoFlotante.offsetWidth - 16,
+        y: window.innerHeight - botonCarritoFlotante.offsetHeight - 92
+    };
+
+    posicionarCarritoFlotante(posicionInicial.x, posicionInicial.y);
+}
+
+function iniciarArrastreCarrito(evento) {
+    if (!botonCarritoFlotante) return;
+
+    const rect = botonCarritoFlotante.getBoundingClientRect();
+    arrastreCarritoFlotante = {
+        pointerId: evento.pointerId,
+        inicioX: evento.clientX,
+        inicioY: evento.clientY,
+        offsetX: evento.clientX - rect.left,
+        offsetY: evento.clientY - rect.top,
+        movido: false
+    };
+    botonCarritoFlotante.setPointerCapture(evento.pointerId);
+}
+
+function moverCarritoFlotante(evento) {
+    if (!arrastreCarritoFlotante || arrastreCarritoFlotante.pointerId !== evento.pointerId) return;
+
+    const deltaX = Math.abs(evento.clientX - arrastreCarritoFlotante.inicioX);
+    const deltaY = Math.abs(evento.clientY - arrastreCarritoFlotante.inicioY);
+
+    if (deltaX > 6 || deltaY > 6) {
+        arrastreCarritoFlotante.movido = true;
+        botonCarritoFlotante.dataset.dragging = 'true';
+    }
+
+    if (!arrastreCarritoFlotante.movido) return;
+    posicionarCarritoFlotante(evento.clientX - arrastreCarritoFlotante.offsetX, evento.clientY - arrastreCarritoFlotante.offsetY);
+}
+
+function terminarArrastreCarrito(evento) {
+    if (!arrastreCarritoFlotante || arrastreCarritoFlotante.pointerId !== evento.pointerId) return;
+
+    if (arrastreCarritoFlotante.movido) {
+        const rect = botonCarritoFlotante.getBoundingClientRect();
+        posicionarCarritoFlotante(rect.left, rect.top, true);
+        window.setTimeout(() => {
+            if (botonCarritoFlotante) botonCarritoFlotante.dataset.dragging = 'false';
+        }, 0);
+    }
+
+    arrastreCarritoFlotante = null;
+}
+
+function crearCarritoFlotante() {
+    if (!enlaceCarrito || botonCarritoFlotante) return;
+
+    botonCarritoFlotante = document.createElement('button');
+    botonCarritoFlotante.type = 'button';
+    botonCarritoFlotante.className = 'floating-cart-button';
+    botonCarritoFlotante.setAttribute('aria-label', 'Abrir carrito');
+    botonCarritoFlotante.innerHTML = `
+        <span class="floating-cart-icon" aria-hidden="true">🛒</span>
+        <span class="floating-cart-text">Carrito</span>
+        <span class="floating-cart-count">0</span>
+    `;
+    botonCarritoFlotante.addEventListener('click', abrirCarritoDesdeAcceso);
+    botonCarritoFlotante.addEventListener('pointerdown', iniciarArrastreCarrito);
+    botonCarritoFlotante.addEventListener('pointermove', moverCarritoFlotante);
+    botonCarritoFlotante.addEventListener('pointerup', terminarArrastreCarrito);
+    botonCarritoFlotante.addEventListener('pointercancel', terminarArrastreCarrito);
+    document.body.appendChild(botonCarritoFlotante);
+}
+
+function actualizarCarritoFlotante(totalArticulos) {
+    crearCarritoFlotante();
+    if (!botonCarritoFlotante) return;
+
+    botonCarritoFlotante.querySelector('.floating-cart-count').textContent = totalArticulos;
+    botonCarritoFlotante.classList.toggle('is-visible', totalArticulos > 0);
+    if (totalArticulos > 0 && !botonCarritoFlotante.style.left) {
+        restaurarPosicionCarritoFlotante();
     }
 }
 
@@ -358,10 +487,16 @@ function crearModalConfiguracion() {
             </header>
             <form class="product-config-form p-3">
                 <p class="product-config-name fw-bold mb-3"></p>
-                <label class="form-label" for="seleccion-genero">Género</label>
-                <select class="form-select mb-3" id="seleccion-genero" required></select>
-                <label class="form-label" for="seleccion-talla">Talla (US)</label>
-                <select class="form-select mb-3" id="seleccion-talla" required></select>
+                <input type="hidden" id="seleccion-genero" name="genero" required>
+                <input type="hidden" id="seleccion-talla" name="talla" required>
+                <fieldset class="config-choice-group mb-3">
+                    <legend class="form-label">Género</legend>
+                    <div class="config-options" data-config-options="genero"></div>
+                </fieldset>
+                <fieldset class="config-choice-group mb-3">
+                    <legend class="form-label">Talla (US)</legend>
+                    <div class="config-options config-options-sizes" data-config-options="talla"></div>
+                </fieldset>
                 <p class="stock-disponible text-muted mb-3"></p>
                 <p class="config-error text-danger small" aria-live="polite"></p>
                 <button type="submit" class="btn btn-dark w-100">Añadir al carrito</button>
@@ -384,20 +519,34 @@ function cerrarConfiguracion() {
     modalConfiguracion.setAttribute('aria-hidden', 'true');
 }
 
-function llenarOpciones(select, opciones, placeholder) {
-    select.textContent = '';
-    const opcionInicial = document.createElement('option');
-    opcionInicial.value = '';
-    opcionInicial.textContent = placeholder;
-    opcionInicial.disabled = true;
-    opcionInicial.selected = true;
-    select.appendChild(opcionInicial);
+function seleccionarOpcionConfiguracion(modal, tipo, botonSeleccionado) {
+    const input = modal.querySelector(`#seleccion-${tipo}`);
+    const opciones = modal.querySelectorAll(`[data-config-options="${tipo}"] .config-option`);
 
+    input.value = botonSeleccionado.dataset.value;
+    opciones.forEach(boton => {
+        const seleccionado = boton === botonSeleccionado;
+        boton.classList.toggle('is-selected', seleccionado);
+        boton.setAttribute('aria-pressed', String(seleccionado));
+    });
+    modal.querySelector('.config-error').textContent = '';
+}
+
+function llenarOpciones(modal, tipo, opciones) {
+    const contenedor = modal.querySelector(`[data-config-options="${tipo}"]`);
+    const input = modal.querySelector(`#seleccion-${tipo}`);
+
+    contenedor.textContent = '';
+    input.value = '';
     opciones.forEach(opcion => {
-        const elemento = document.createElement('option');
-        elemento.value = opcion;
+        const elemento = document.createElement('button');
+        elemento.type = 'button';
+        elemento.className = 'config-option';
+        elemento.dataset.value = opcion;
         elemento.textContent = opcion;
-        select.appendChild(elemento);
+        elemento.setAttribute('aria-pressed', 'false');
+        elemento.addEventListener('click', () => seleccionarOpcionConfiguracion(modal, tipo, elemento));
+        contenedor.appendChild(elemento);
     });
 }
 
@@ -409,8 +558,8 @@ function abrirConfiguracionProducto(tarjeta) {
 
     modalConfiguracion.dataset.productoBaseId = producto.productoBaseId;
     modalConfiguracion.querySelector('.product-config-name').textContent = producto.nombre;
-    llenarOpciones(modalConfiguracion.querySelector('#seleccion-genero'), GENEROS_DISPONIBLES, 'Selecciona un género');
-    llenarOpciones(modalConfiguracion.querySelector('#seleccion-talla'), TALLAS_DISPONIBLES, 'Selecciona una talla');
+    llenarOpciones(modalConfiguracion, 'genero', GENEROS_DISPONIBLES);
+    llenarOpciones(modalConfiguracion, 'talla', TALLAS_DISPONIBLES);
     modalConfiguracion.querySelector('.config-error').textContent = '';
     modalConfiguracion.querySelector('.stock-disponible').textContent = `Stock disponible: ${obtenerStockDisponible(producto)} pares`;
     modalConfiguracion.classList.add('is-open');
@@ -810,15 +959,7 @@ filtrosMarca.forEach(filtro => {
 });
 
 if (enlaceCarrito) {
-    enlaceCarrito.addEventListener('click', evento => {
-        evento.preventDefault();
-        if (!usuarioAutenticado) {
-            window.alert('Inicia sesión para ver tu carrito.');
-            window.location.href = 'login.html';
-            return;
-        }
-        abrirCarrito();
-    });
+    enlaceCarrito.addEventListener('click', abrirCarritoDesdeAcceso);
 }
 
 document.addEventListener('sesion-cargada', evento => {

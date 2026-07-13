@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const request = require("supertest");
 const app = require("../app");
+const { adminEmail, adminPassword } = require("../config/env");
 
 const obtenerCsrf = async (agent) => {
   const response = await agent.get("/api/security/csrf").expect(200);
@@ -38,7 +39,7 @@ test("autentica al admin desde SQLite y conserva su sesión", async () => {
   const login = await agent
     .post("/api/auth/login")
     .set("X-CSRF-Token", csrf)
-    .send({ email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD })
+    .send({ email: adminEmail, password: adminPassword })
     .expect(200);
   assert.equal(login.body.data.role, "admin");
   await agent.get("/api/admin/me").expect(200);
