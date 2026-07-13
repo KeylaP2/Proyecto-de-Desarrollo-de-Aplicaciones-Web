@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso administrativo | SoloTenisRD</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-login-page">
+    <main class="admin-login-shell">
+        <section class="admin-login-card">
+            <a class="admin-back" href="index.html">← Volver a la tienda</a>
+            <div class="admin-logo">ST<span>RD</span></div>
+            <p class="admin-eyebrow">Área restringida</p>
+            <h1>Administración</h1>
+            <p class="admin-login-copy">Inicia sesión para gestionar los usuarios registrados.</p>
+            <form id="admin-login-form" novalidate>
+                <label for="admin-email">Correo administrativo</label>
+                <input id="admin-email" name="email" type="email" autocomplete="username" required>
+                <label for="admin-password">Contraseña</label>
+                <div class="admin-password-field">
+                    <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+                    <button type="button" id="toggle-admin-password" aria-label="Mostrar contraseña">Ver</button>
+                </div>
+                <p id="admin-login-message" class="admin-form-message" aria-live="polite"></p>
+                <button class="admin-primary-button" type="submit">Entrar al panel</button>
+            </form>
+            <p class="admin-security-note">Sesión protegida · Máximo 5 intentos cada 15 minutos</p>
+        </section>
+    </main>
+    <script src="security.js"></script>
+    <script src="admin-login.js"></script>
+</body>
+</html>

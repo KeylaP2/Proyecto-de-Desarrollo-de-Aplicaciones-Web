@@ -1,0 +1,36 @@
+{
+  "name": "backend-api-sqlite",
+  "version": "1.0.0",
+  "description": "API RESTful con Express.js y SQLite usando SQL puro.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "init-db": "node database/init.js",
+    "test": "node --test --test-force-exit",
+    "lint": "cd .. && backend/node_modules/.bin/eslint backend frontend",
+    "check": "npm run lint && npm test && npm audit --omit=dev"
+  },
+  "keywords": [
+    "express",
+    "sqlite",
+    "rest-api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "helmet": "^8.3.0",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.1.4"
+  }
+}

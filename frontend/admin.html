@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel administrativo | SoloTenisRD</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-page">
+    <aside class="admin-sidebar">
+        <div class="admin-logo">ST<span>RD</span></div>
+        <p>Panel administrativo</p>
+        <nav><a class="is-active" href="#usuarios">Usuarios</a><a href="index.html">Ver tienda</a></nav>
+        <button id="admin-logout" type="button">Cerrar sesión</button>
+    </aside>
+    <main class="admin-main" id="usuarios">
+        <header class="admin-topbar">
+            <div><p class="admin-eyebrow">SoloTenisRD</p><h1>Usuarios registrados</h1><p>Gestiona las cuentas de clientes desde un espacio protegido.</p></div>
+            <div class="admin-identity"><span class="admin-avatar">A</span><div><strong>Administrador</strong><small id="admin-session-email"></small></div></div>
+        </header>
+        <section class="admin-stats" aria-label="Resumen">
+            <article><span>Total de usuarios</span><strong id="total-users">0</strong></article>
+            <article><span>Resultados visibles</span><strong id="visible-users">0</strong></article>
+            <article><span>Estado del sistema</span><strong class="admin-online">Activo</strong></article>
+        </section>
+        <section class="admin-panel">
+            <header class="admin-toolbar">
+                <label class="admin-search"><span aria-hidden="true">⌕</span><input id="admin-search" type="search" placeholder="Buscar por nombre, correo o teléfono"></label>
+                <div><button class="admin-secondary-button" id="refresh-users" type="button">Actualizar</button><button class="admin-primary-button" id="new-user" type="button">+ Nuevo usuario</button></div>
+            </header>
+            <p id="admin-panel-message" class="admin-form-message" aria-live="polite"></p>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>Usuario</th><th>Contacto</th><th>Fecha de nacimiento</th><th>Género</th><th>Registro</th><th>Acciones</th></tr></thead>
+                    <tbody id="users-table-body"></tbody>
+                </table>
+                <div id="admin-empty" class="admin-empty" hidden><strong>No hay usuarios para mostrar</strong><span>Prueba con otra búsqueda o crea un usuario.</span></div>
+            </div>
+        </section>
+    </main>
+    <section class="admin-modal" id="user-modal" aria-hidden="true">
+        <article role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
+            <header><div><p class="admin-eyebrow">Gestión de cuenta</p><h2 id="user-modal-title">Nuevo usuario</h2></div><button class="admin-modal-close" type="button" aria-label="Cerrar">×</button></header>
+            <form id="user-admin-form">
+                <div class="admin-form-grid">
+                    <label>Nombre<input name="nombre" required maxlength="60"></label>
+                    <label>Apellido<input name="apellido" required maxlength="60"></label>
+                    <label class="admin-span-2">Correo electrónico<input name="email" type="email" required></label>
+                    <label>Teléfono<input name="telefono" inputmode="numeric" pattern="(809|829|849)[0-9]{7}" maxlength="10" required></label>
+                    <label>Fecha de nacimiento<input name="fechaNacimiento" type="date" required></label>
+                    <label>Género<select name="genero" required><option value="">Seleccionar</option><option>Mujer</option><option>Hombre</option><option>Otro</option></select></label>
+                    <label>Contraseña<input name="password" type="password" minlength="8"><small>Obligatoria al crear; opcional al editar.</small></label>
+                </div>
+                <p id="user-form-message" class="admin-form-message" aria-live="polite"></p>
+                <footer><button class="admin-secondary-button admin-cancel" type="button">Cancelar</button><button class="admin-primary-button" type="submit">Guardar usuario</button></footer>
+            </form>
+        </article>
+    </section>
+    <script src="security.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
